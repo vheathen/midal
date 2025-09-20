@@ -1,0 +1,20 @@
+{
+    "version": 2,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20
+    },
+    "configurePresets": [
+        {
+            "name": "build",
+            "displayName": "Build for Pro Micro nRF52840",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "BOARD": "promicro_nrf52840/nrf52840/uf2",
+                "CONF_FILE": "prj.conf",
+                "DTC_OVERLAY_FILE": "boards/promicro_nrf52840_nrf52840_uf2.overlay"
+            }
+        }
+    ]
+}
