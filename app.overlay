@@ -1,0 +1,31 @@
+/ {
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+	};
+
+	/* MIDI: a root level dedicated node */
+	usb_midi: usb_midi {
+		compatible = "zephyr,midi2-device";
+		status = "okay";
+		#address-cells = <1>;
+		#size-cells = <1>;
+	
+		/* GTB: groups of UMP. Example: 1 group, bi-dir */
+		midi_in_out@0 {
+				reg = <0 1>;                     /* start group=0, span=1 */
+				protocol = "midi1-up-to-128b";
+				status = "okay";
+		};
+	};
+
+};
+
+&zephyr_udc0 {
+	status = "okay";
+
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "Midal USB CDC-ACM";
+		status = "okay";
+	};	
+};

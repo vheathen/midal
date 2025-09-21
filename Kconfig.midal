@@ -1,0 +1,22 @@
+menu "MIDAL MIDI Interface Core Options"
+
+config MIDAL_POLL_HZ
+    int "Pedal poll frequency (Hz)"
+    default 1000
+    range 250 4000
+
+config MIDAL_USE_14BIT_CC
+    bool "Use 14-bit CC (MSB+LSB)"
+    default n
+
+config MIDAL_FILTER_ALPHA_MILLIPCT
+    int "EMA alpha (millipercent, 0..100000)"
+    default 200
+    range 0 100000
+
+config MIDAL_FILTER_HYST
+    int "Hysteresis in CC steps"
+    default 2
+    range 0 10
+
+endmenu

@@ -1,0 +1,46 @@
+menu "MIDAL MIDI interface USB options"
+	depends on USB_DEVICE_STACK_NEXT
+
+config MIDAL_USBD_MANUFACTURER
+	string "USB device manufacturer string"
+	default "MiddleagedPianoStudent"
+	help
+	  USB device manufacturer string.
+
+config MIDAL_USBD_PRODUCT
+	string "USB device product string"
+	default "MIDAL Pedal MIDI Interface"
+	help
+	  USB device product string.
+
+config MIDAL_USBD_PID
+	hex "USB device Product ID"
+	default 0x0001
+	help
+	  USB device Product ID.
+
+config MIDAL_USBD_SELF_POWERED
+	bool "USB device Self-powered attribute"
+	default n
+	help
+	  Set the Self-powered attribute in the configuration.
+
+config MIDAL_USBD_REMOTE_WAKEUP
+	bool "USB device Remote Wakeup attribute"
+	help
+	  Set the Remote Wakeup attribute in the configuration.
+
+config MIDAL_USBD_MAX_POWER
+	int "USB device bMaxPower value"
+	default 125
+	range 0 250
+	help
+	  bMaxPower value in the configuration in 2 mA units.
+
+config MIDAL_USBD_20_EXTENSION_DESC
+	bool "Use default USB 2.0 Extension Descriptor"
+	depends on USBD_BOS_SUPPORT
+	help
+	  Set bcdUSB value to 0201 and use default USB 2.0 Extension Descriptor.
+
+endmenu

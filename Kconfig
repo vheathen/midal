@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+
+
+menu "MIDAL MIDI Interface Core"
+rsource "Kconfig.midal"
+endmenu
+
+menu "MIDAL MIDI Interface USB Device"
+rsource "Kconfig.midal_usbd"
+endmenu
+
+source "Kconfig.zephyr"
