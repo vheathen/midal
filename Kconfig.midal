@@ -3,7 +3,7 @@ menu "MIDAL MIDI Interface Core Options"
 config MIDAL_POLL_HZ
     int "Pedal poll frequency (Hz)"
     default 1000
-    range 250 4000
+    range 1 1000
 
 config MIDAL_USE_14BIT_CC
     bool "Use 14-bit CC (MSB+LSB)"

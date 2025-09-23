@@ -1,0 +1,99 @@
+/ {
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+	};
+
+	/* MIDI: a root level dedicated node */
+	usb_midi: usb_midi {
+		compatible = "zephyr,midi2-device";
+		status = "okay";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* GTB: groups of UMP. Example: 1 group, bi-dir */
+		midi_in_out@0 {
+				reg = <0 1>;                     /* start group=0, span=1 */
+				protocol = "midi1-up-to-128b";
+				status = "okay";
+		};
+	};
+
+	/* Pedal ADC channels for devicetree-based configuration */
+	zephyr,user {
+    // Keep channels and their names in sync
+		io-channels = <&adc 7>, <&adc 0>, <&adc 5>;
+		io-channel-names = "PEDAL_SUSTAIN", "PEDAL_SOSTENUTO", "PEDAL_SOFT";
+	};
+};
+
+&zephyr_udc0 {
+	status = "okay";
+
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "Midal USB CDC-ACM";
+		status = "okay";
+	};	
+};
+
+&adc {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	/* DAMPER pedal - P0.31 = AIN7 */
+	channel@7 {
+		reg = <7>;
+		zephyr,gain = "ADC_GAIN_1_6";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN7>; /* P0.31 */
+		zephyr,resolution = <12>;
+	};
+
+	/* SOSTENUTO pedal - P0.02 = AIN0 */
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_6";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN0>; /* P0.02 */
+		zephyr,resolution = <12>;
+	};
+
+	/* SOFT pedal - P0.29 = AIN5 */
+	channel@5 {
+		reg = <5>;
+		zephyr,gain = "ADC_GAIN_1_6";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN5>; /* P0.29 */
+		zephyr,resolution = <12>;
+	};
+};
+
+// /* DIN5 TX на uart1 (пример пинов — поправь под свою плату) */
+// &uart1 {
+// 	status = "okay";
+// 	current-speed = <31250>;
+// 	parity = "none";
+// 	hw-flow-control = "none";
+// 	/* Укажи pinctrl */
+// 	pinctrl-0 = <&uart1_default>;
+// 	pinctrl-names = "default";
+// };
+
+// &led_pwr {
+// 	gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
+// 	label = "Power LED (P1.11)";
+// };
+
+// &led_usb {
+// 	gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
+// 	label = "USB MIDI LED (P1.13)";
+// };
+
+// &led_ble {
+// 	gpios = <&gpio1 15 GPIO_ACTIVE_LOW>;
+// 	label = "BLE LED (P1.15)";
+// };

@@ -4,10 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include <zephyr/device.h>
+#include <zephyr/kernel.h>
 #include <zephyr/usb/bos.h>
 #include <zephyr/usb/usbd.h>
 
@@ -64,32 +62,48 @@ static const struct usb_bos_capability_lpm bos_cap_lpm = {
 USBD_DESC_BOS_DEFINE(midal_usbext, sizeof(bos_cap_lpm), &bos_cap_lpm);
 #endif
 
+static void handle_vbus_ready(struct usbd_context *const ctx) {
+  if (usbd_enable(ctx)) {
+    LOG_ERR("Failed to enable device support");
+  }
+}
+
+static void handle_vbus_removed(struct usbd_context *const ctx) {
+  if (usbd_disable(ctx)) {
+    LOG_ERR("Failed to disable device support");
+  }
+}
+
 static void root_msg_cb(struct usbd_context *const ctx,
                         const struct usbd_msg *msg) {
   LOG_DBG("USBD message: %s", usbd_msg_type_string(msg->type));
 
-  if (usbd_can_detect_vbus(ctx)) {
-    if (msg->type == USBD_MSG_VBUS_READY) {
-      if (usbd_enable(ctx)) {
-        LOG_ERR("Failed to enable device support");
-      }
-    }
+  if (!usbd_can_detect_vbus(ctx)) {
+    return;
+  }
 
-    if (msg->type == USBD_MSG_VBUS_REMOVED) {
-      if (usbd_disable(ctx)) {
-        LOG_ERR("Failed to disable device support");
-      }
-    }
+  switch (msg->type) {
+
+  case USBD_MSG_VBUS_READY:
+    handle_vbus_ready(ctx);
+    break;
+
+  case USBD_MSG_VBUS_REMOVED:
+    handle_vbus_removed(ctx);
+    break;
+
+  default:
+    break;
   }
 }
 
 static void fix_code_triple(struct usbd_context *uds_ctx,
                             const enum usbd_speed speed) {
   /* Always use class code information from Interface Descriptors */
-  if (IS_ENABLED(CONFIG_USBD_CDC_ACM_CLASS) ||
+  if (IS_ENABLED(CONFIG_USBD_MIDI2_CLASS) ||
+      IS_ENABLED(CONFIG_USBD_CDC_ACM_CLASS) ||
       IS_ENABLED(CONFIG_USBD_CDC_ECM_CLASS) ||
       IS_ENABLED(CONFIG_USBD_CDC_NCM_CLASS) ||
-      IS_ENABLED(CONFIG_USBD_MIDI2_CLASS) ||
       IS_ENABLED(CONFIG_USBD_AUDIO2_CLASS)) {
     /*
      * Class with multiple interfaces have an Interface

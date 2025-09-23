@@ -12,4 +12,8 @@ target_sources(app PRIVATE
   src/main.c
   src/usbd/usbd.c
   src/usbd/midi.c
+  src/pedal/pedal_reader.c
+  src/pedal/pedal_sampler.c
+  src/pedal/pedal_sampler_thread.c
+  src/pedal/pedal_filter.c
 )
