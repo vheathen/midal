@@ -69,7 +69,9 @@ static uint16_t read_adc(uint8_t pedal_idx) {
   return value & 0x0FFF;
 }
 
+#if IS_ENABLED(CONFIG_MIDAL_PEDAL_LOG)
 static uint32_t last_log_time[MIDAL_NUM_PEDALS] = {0};
+#endif
 
 void read_pedals(void) {
   for (size_t i = 0; i < pedals_count; i++) {
@@ -79,8 +81,9 @@ void read_pedals(void) {
     /* Log pedal values with descriptive names - per
 pedal rate limiting */
 
+#if IS_ENABLED(CONFIG_MIDAL_PEDAL_LOG)
     uint32_t now = k_uptime_get_32();
-    if (now - last_log_time[i] >= 100) { // 100ms per pedal
+    if (now - last_log_time[i] >= CONFIG_MIDAL_PEDAL_LOG_RATE) {
       pedal_calibration_t cal;
       pedal_filter_get_calibration(i, &cal);
       LOG_INF("%s pedal: raw=%d filtered=%d CC%d [cal: %d-%d %s]",
@@ -88,10 +91,7 @@ pedal rate limiting */
               cal.min_adc, cal.max_adc, cal.initialized ? "ready" : "init");
       last_log_time[i] = now;
     }
-
-    /* Log pedal values with descriptive names */
-    // LOG_INF("%s pedal: raw=%d filtered=%d CC%d", pedal_configs[i].name, raw,
-    //         val, pedal_configs[i].midi_cc);
+#endif
 
     /* TODO: Enable when MIDI router is ready */
     // midi_event_t ev = {.type = MIDI_EV_CC,
