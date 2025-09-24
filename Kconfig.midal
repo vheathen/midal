@@ -91,4 +91,12 @@ config MIDAL_CAL_MIN_SPAN_LSB
       min/max. If the current (max-min) is smaller than this value, the
       denominator is clamped up to avoid huge gain and division-by-zero.
 
+config MIDAL_ACQ_SELFTEST
+    bool "Run SAADC acquisition-time self-test at boot"
+    default n
+    help
+      When enabled, at boot the firmware tries acq = {10,20,40,80} us,
+      measures mean and peak-to-peak on each pedal channel, and runs an A->B->A
+      cross-talk check. Results are printed to logs. Production should disable.
+      
 endmenu

@@ -9,6 +9,7 @@ target_include_directories(app PRIVATE
 )
 
 target_sources(app PRIVATE
+  src/diag/saadc_selftest.c
   src/main.c
   src/usbd/usbd.c
   src/usbd/midi.c
