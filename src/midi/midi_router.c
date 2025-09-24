@@ -31,17 +31,15 @@ bool midi_router_submit(const midi_event_t *ev) {
 }
 
 void midi_router_start(void) {
-  k_thread_create(&router_thread_data, router_stack, K_THREAD_STACK_SIZEOF(router_stack),
-                  router_thread, NULL, NULL, NULL, ROUTER_THREAD_PRIORITY, 0,
-                  K_NO_WAIT);
+  k_thread_create(&router_thread_data, router_stack,
+                  K_THREAD_STACK_SIZEOF(router_stack), router_thread, NULL,
+                  NULL, NULL, ROUTER_THREAD_PRIORITY, 0, K_NO_WAIT);
 }
 
 static void router_thread(void *, void *, void *) {
   midi_event_t ev;
   while (1) {
     if (k_msgq_get(&midi_q, &ev, K_FOREVER) == 0) {
-
-      LOG_INF("Router: %d", ev.type);
 
       for (size_t i = 0; i < s_txn; i++) {
         if (s_txs[i]) {

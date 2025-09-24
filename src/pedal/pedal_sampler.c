@@ -42,6 +42,11 @@ const pedal_config_t pedal_configs[] = {
 const size_t pedals_count = ARRAY_SIZE(pedal_configs);
 int16_t adc_sample_buffer[ARRAY_SIZE(pedal_configs)];
 
+/*
+ * Last sent CC value per pedal (uint16_t: 0..127 or 0..16383). 0xFFFF = unknown
+ */
+static uint16_t last_sent_cc[MIDAL_NUM_PEDALS];
+
 static uint16_t read_adc(uint8_t pedal_idx) {
   if (pedal_idx >= pedals_count) {
     LOG_ERR("Invalid pedal index %d", pedal_idx);
@@ -89,13 +94,21 @@ void read_pedals(void) {
     }
 #endif
 
-    /* TODO: Enable when MIDI router is ready */
-    midi_event_t ev = {.type = MIDI_EV_CC,
-                       .timestamp_us = k_ticks_to_us_floor32(k_uptime_ticks()),
-                       .cc = {.ch = pedal_configs[i].midi_channel,
-                              .cc = pedal_configs[i].midi_cc,
-                              .value = val}};
-    (void)midi_router_submit(&ev);
+    /* Send only on change to avoid flooding identical CC values */
+    if (last_sent_cc[i] != val) {
+      last_sent_cc[i] = val;
+      midi_event_t ev = {
+          .type = MIDI_EV_CC,
+          .timestamp_us = k_ticks_to_us_floor32(k_uptime_ticks()),
+          .cc =
+              {
+                  .ch = pedal_configs[i].midi_channel,
+                  .cc = pedal_configs[i].midi_cc,
+                  .value = val,
+              },
+      };
+      (void)midi_router_submit(&ev);
+    }
   }
 }
 
@@ -121,6 +134,9 @@ int pedal_sampler_init_sensors(void) {
   k_sleep(K_MSEC(2000));
 
   pedal_filter_init();
+
+  /* Initialize last sent CC values */
+  memset(last_sent_cc, 0xFF, sizeof(last_sent_cc));
 
   LOG_INF("Pedal sampler initialized with %d pedals:", (int)pedals_count);
 
