@@ -17,8 +17,8 @@ target_sources(app PRIVATE
   src/pedal/pedal_reader.c
   src/pedal/pedal_sampler.c
   src/pedal/pedal_filter.c
-  # src/midi/midi_codec.c
-  # src/midi/midi_router.c
+  src/midi/midi_codec.c
+  src/midi/midi_router.c
   # src/transports/transport_usb_midi.c
   # src/transports/transport_ble_midi.c
   # src/transports/transport_uart_midi.c

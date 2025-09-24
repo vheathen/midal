@@ -1,3 +1,4 @@
+#include "midi/midi_router.h"
 #include "pedal/pedal.h"
 #include "usbd/midi.h"
 #include "usbd/usbd.h"
@@ -38,6 +39,10 @@ int main(void) {
 #endif
 
 #if !IS_ENABLED(CONFIG_MIDAL_ACQ_SELFTEST)
+
+  midi_router_init();
+
+  midi_router_start();
 
   ret = pedal_reader_start();
   if (ret != 0) {

@@ -1,10 +1,8 @@
-#include "midal_conf.h"
-
-#include "pedal_filter.h"
 #include "pedal_sampler.h"
-
-// #include "midi/midi_router.h"  // TODO: Enable when MIDI router is ready
-// #include "midi/midi_types.h"   // TODO: Enable when MIDI router is ready
+#include "midal_conf.h"
+#include "midi/midi_router.h"
+#include "midi/midi_types.h"
+#include "pedal_filter.h"
 
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/adc.h>
@@ -78,10 +76,8 @@ void read_pedals(void) {
     uint16_t raw = read_adc(i);
     uint16_t val = pedal_filter_apply(i, raw);
 
-    /* Log pedal values with descriptive names - per
-pedal rate limiting */
-
 #if IS_ENABLED(CONFIG_MIDAL_PEDAL_LOG)
+    /* Log pedal values with descriptive names - per pedal rate limiting */
     uint32_t now = k_uptime_get_32();
     if (now - last_log_time[i] >= CONFIG_MIDAL_PEDAL_LOG_RATE) {
       pedal_calibration_t cal;
@@ -94,13 +90,12 @@ pedal rate limiting */
 #endif
 
     /* TODO: Enable when MIDI router is ready */
-    // midi_event_t ev = {.type = MIDI_EV_CC,
-    //                    .timestamp_us =
-    //                    k_ticks_to_us_floor32(k_uptime_ticks()), .cc = {.ch
-    //                    = pedal_configs[i].midi_channel,
-    //                           .cc = pedal_configs[i].midi_cc,
-    //                           .value = val}};
-    // (void)midi_router_submit(&ev);
+    midi_event_t ev = {.type = MIDI_EV_CC,
+                       .timestamp_us = k_ticks_to_us_floor32(k_uptime_ticks()),
+                       .cc = {.ch = pedal_configs[i].midi_channel,
+                              .cc = pedal_configs[i].midi_cc,
+                              .value = val}};
+    (void)midi_router_submit(&ev);
   }
 }
 
