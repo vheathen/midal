@@ -13,8 +13,21 @@ K_SEM_DEFINE(pedal_reader_sem, 0, 1);
 static struct k_thread pedal_reader_thread_data;
 static K_THREAD_STACK_DEFINE(pedal_reader_thread_stack,
                              PEDAL_READER_THREAD_STACK_SIZE);
+static void pedal_reader_thread(void *p1, void *p2, void *p3);
 
 static struct k_timer poll_tmr;
+
+void pedal_reader_init(void) {
+  /* Create and start sensor thread */
+  k_thread_create(&pedal_reader_thread_data, pedal_reader_thread_stack,
+                  K_THREAD_STACK_SIZEOF(pedal_reader_thread_stack),
+                  pedal_reader_thread, NULL, NULL, NULL,
+                  PEDAL_READER_THREAD_PRIORITY, 0, K_NO_WAIT);
+  k_thread_name_set(&pedal_reader_thread_data, "pedal-reader");
+
+  LOG_INF("Pedal reader thread initialized with priority %d",
+          PEDAL_READER_THREAD_PRIORITY);
+}
 
 static void trigger_pedals_reading(struct k_timer *tmr) {
   ARG_UNUSED(tmr);
@@ -47,16 +60,4 @@ static void pedal_reader_thread(void *p1, void *p2, void *p3) {
     /* Perform ADC readings and processing in thread context */
     read_pedals();
   }
-}
-
-void pedal_reader_init(void) {
-  /* Create and start sensor thread */
-  k_thread_create(&pedal_reader_thread_data, pedal_reader_thread_stack,
-                  K_THREAD_STACK_SIZEOF(pedal_reader_thread_stack),
-                  pedal_reader_thread, NULL, NULL, NULL,
-                  PEDAL_READER_THREAD_PRIORITY, 0, K_NO_WAIT);
-  k_thread_name_set(&pedal_reader_thread_data, "pedal-reader");
-
-  LOG_INF("Pedal reader thread initialized with priority %d",
-          PEDAL_READER_THREAD_PRIORITY);
 }
