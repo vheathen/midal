@@ -1,6 +1,4 @@
-
-#include "diag/saadc_selftest.h"
-#include "pedal/pedal_reader.h"
+#include "pedal/pedal.h"
 #include "usbd/midi.h"
 #include "usbd/usbd.h"
 
@@ -11,6 +9,10 @@
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
+
+#if IS_ENABLED(CONFIG_MIDAL_ACQ_SELFTEST)
+#include "diag/saadc_selftest.h"
+#endif
 
 int main(void) {
 
@@ -36,11 +38,13 @@ int main(void) {
 #endif
 
 #if !IS_ENABLED(CONFIG_MIDAL_ACQ_SELFTEST)
-  ret = pedal_reader_init();
+
+  ret = pedal_reader_start();
   if (ret != 0) {
     LOG_ERR("Failed to initialize pedal subsystem: %d", ret);
     return 0;
   }
+
 #endif
 
   return 0;
