@@ -4,13 +4,12 @@
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pedal_reader, LOG_LEVEL_INF);
+#include <zephyr/sys/util.h>
 
 static struct k_timer poll_tmr;
 
 static void trigger_sensors_reading(struct k_timer *tmr) {
   ARG_UNUSED(tmr);
-
-  LOG_INF("Sensor polling triggered");
 
   /* Signal sensor thread to perform ADC readings */
   k_sem_give(&sensor_sem);
@@ -20,8 +19,8 @@ static void pedal_sampler_start(void) {
   /* Initialize timer with thread trigger callback */
   k_timer_init(&poll_tmr, trigger_sensors_reading, NULL);
 
-  uint32_t period_ms = 1000 / CONFIG_MIDAL_POLL_HZ;
-  period_ms = period_ms == 0 ? 1 : period_ms;
+  uint32_t period_ms = DIV_ROUND_UP(1000, CONFIG_MIDAL_POLL_HZ);
+  // period_ms = period_ms == 0 ? 1 : period_ms;
   k_timer_start(&poll_tmr, K_MSEC(period_ms), K_MSEC(period_ms));
 
   LOG_INF("Sensor polling started at %d Hz", CONFIG_MIDAL_POLL_HZ);
@@ -31,7 +30,11 @@ int pedal_reader_init(void) {
   LOG_INF("Initializing pedal reading subsystem...");
 
   /* Initialize hardware interface (ADC channels, filters) */
-  pedal_sampler_init_sensors();
+  int ret = pedal_sampler_init_sensors();
+  if (ret != 0) {
+    LOG_ERR("Failed to initialize pedal sampler: %d", ret);
+    return ret;
+  }
 
   /* Initialize and start sensor thread */
   pedal_sampler_thread_init();

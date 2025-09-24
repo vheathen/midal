@@ -3,20 +3,92 @@ menu "MIDAL MIDI Interface Core Options"
 config MIDAL_POLL_HZ
     int "Pedal poll frequency (Hz)"
     default 1000
-    range 1 1000
+    range 250 4000
+    help
+      Sampling rate for pedal ADC scanning and filter updates.
+      Higher values reduce latency but increase CPU load.
+      Typical: 1000 Hz. Advanced: up to 2000–4000 Hz.
 
 config MIDAL_USE_14BIT_CC
     bool "Use 14-bit CC (MSB+LSB)"
-    default n
+    default y
+    help
+      When enabled, send high‑resolution CC as MSB+LSB pair (two MIDI 1.0 messages).
+      This doubles traffic; prefer off when minimizing latency.
+
+config MIDAL_FILTER_ALPHA_AUTO
+    bool "Compute EMA alpha from fs and τ"
+    default y
+    help
+      When enabled, the EMA coefficient α is computed from the poll rate (fs)
+      and the desired time constant τ (MIDAL_FILTER_TAU_MS):
+        α = 1 − exp(−Ts/τ), Ts = 1/fs.
+      Disable to set α manually via MIDAL_FILTER_ALPHA_MILLIPCT.
+
+config MIDAL_FILTER_TAU_MS
+    int "EMA time constant τ (ms)"
+    default 5
+    range 1 100
+    depends on MIDAL_FILTER_ALPHA_AUTO
+    help
+      Effective smoothing time for the one‑pole EMA. Smaller values reduce
+      latency at the cost of noise. 3–5 ms is a good starting point at 1 kHz.
 
 config MIDAL_FILTER_ALPHA_MILLIPCT
     int "EMA alpha (millipercent, 0..100000)"
     default 200
     range 0 100000
+    depends on !MIDAL_FILTER_ALPHA_AUTO
+    help
+      Manual α when auto‑compute is disabled. Example: 20000 → α=0.20.
 
 config MIDAL_FILTER_HYST
     int "Hysteresis in CC steps"
-    default 2
+    default 4
     range 0 10
+    help
+      Deadband after quantization to avoid chattering. For 7‑bit CC use 1–2.
+      For 14‑bit CC consider 4–8 LSB.
+
+config MIDAL_FILTER_ASYM
+    bool "Asymmetric EMA (fast attack, slower release)"
+    default y
+    help
+      Uses different α for rising/falling edges to minimize perceived latency:
+      attack uses alpha_up, release uses alpha_down.
+
+config MIDAL_FILTER_ALPHA_UP_MIN_MILLIPCT
+    int "Attack alpha minimum (millipercent, 0..100000)"
+    default 40000
+    range 0 100000
+    depends on MIDAL_FILTER_ASYM
+    help
+      Lower bound for α during attack (v increasing). 40000 → α_up ≥ 0.40.
+
+config MIDAL_FILTER_ALPHA_DOWN_MAX_MILLIPCT
+    int "Release alpha maximum (millipercent, 0..100000)"
+    default 20000
+    range 0 100000
+    depends on MIDAL_FILTER_ASYM
+    help
+      Upper bound for α during release (v decreasing). 20000 → α_down ≤ 0.20.
+
+config MIDAL_CAL_MARGIN_LSB
+    int "Calibration noise margin (LSB)"
+    default 4
+    range 0 64
+    help
+      Minimum delta in raw ADC counts required to update the learned
+      min/max during dynamic calibration. Prevents min/max from drifting
+      due to 1–2 LSB noise. Set to 0 to disable margin.
+
+config MIDAL_CAL_MIN_SPAN_LSB
+    int "Minimum temporary span (LSB)"
+    default 32
+    range 1 2048
+    help
+      Safeguard span used while calibration is still learning the true
+      min/max. If the current (max-min) is smaller than this value, the
+      denominator is clamped up to avoid huge gain and division-by-zero.
 
 endmenu

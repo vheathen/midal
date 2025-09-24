@@ -19,13 +19,9 @@ static void sensor_thread_entry(void *p1, void *p2, void *p3) {
   ARG_UNUSED(p2);
   ARG_UNUSED(p3);
 
-  LOG_INF("Sensor thread started");
-
   while (1) {
     /* Wait for timer signal */
     k_sem_take(&sensor_sem, K_FOREVER);
-
-    LOG_INF("Sensor thread step");
 
     /* Perform ADC readings and processing in thread context */
     read_pedals();

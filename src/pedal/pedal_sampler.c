@@ -69,14 +69,29 @@ static uint16_t read_adc(uint8_t pedal_idx) {
   return value & 0x0FFF;
 }
 
+static uint32_t last_log_time[MIDAL_NUM_PEDALS] = {0};
+
 void read_pedals(void) {
   for (size_t i = 0; i < pedals_count; i++) {
     uint16_t raw = read_adc(i);
     uint16_t val = pedal_filter_apply(i, raw);
 
+    /* Log pedal values with descriptive names - per
+pedal rate limiting */
+
+    uint32_t now = k_uptime_get_32();
+    if (now - last_log_time[i] >= 100) { // 100ms per pedal
+      pedal_calibration_t cal;
+      pedal_filter_get_calibration(i, &cal);
+      LOG_INF("%s pedal: raw=%d filtered=%d CC%d [cal: %d-%d %s]",
+              pedal_configs[i].name, raw, val, pedal_configs[i].midi_cc,
+              cal.min_adc, cal.max_adc, cal.initialized ? "ready" : "init");
+      last_log_time[i] = now;
+    }
+
     /* Log pedal values with descriptive names */
-    LOG_INF("%s pedal: raw=%d filtered=%d CC%d", pedal_configs[i].name, raw,
-            val, pedal_configs[i].midi_cc);
+    // LOG_INF("%s pedal: raw=%d filtered=%d CC%d", pedal_configs[i].name, raw,
+    //         val, pedal_configs[i].midi_cc);
 
     /* TODO: Enable when MIDI router is ready */
     // midi_event_t ev = {.type = MIDI_EV_CC,
@@ -107,11 +122,10 @@ int pedal_sampler_init_sensors(void) {
     }
   }
 
-  pedal_filter_cfg_t cfg = {.alpha = (float)CONFIG_MIDAL_FILTER_ALPHA_MILLIPCT /
-                                     100000.F,
-                            .hysteresis = CONFIG_MIDAL_FILTER_HYST,
-                            .use14bit = IS_ENABLED(CONFIG_MIDAL_USE_14BIT_CC)};
-  pedal_filter_init(&cfg);
+  /* Wait for ADC to settle */
+  k_sleep(K_MSEC(2000));
+
+  pedal_filter_init();
 
   LOG_INF("Pedal sampler initialized with %d pedals:", (int)pedals_count);
 
@@ -119,4 +133,6 @@ int pedal_sampler_init_sensors(void) {
     LOG_INF("  %s: CC%d on channel %d", pedal_configs[i].name,
             pedal_configs[i].midi_cc, pedal_configs[i].midi_channel);
   }
+
+  return 0;
 }
