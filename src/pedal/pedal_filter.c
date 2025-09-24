@@ -12,7 +12,7 @@
 #ifndef CONFIG_MIDAL_CAL_MIN_SPAN_LSB
 #define CONFIG_MIDAL_CAL_MIN_SPAN_LSB 32
 #endif
-#define CAL_MARGIN   ((uint16_t)CONFIG_MIDAL_CAL_MARGIN_LSB)
+#define CAL_MARGIN ((uint16_t)CONFIG_MIDAL_CAL_MARGIN_LSB)
 #define CAL_MIN_SPAN ((uint16_t)CONFIG_MIDAL_CAL_MIN_SPAN_LSB)
 
 typedef struct {
@@ -104,7 +104,9 @@ uint16_t pedal_filter_apply(uint8_t id, uint16_t raw12) {
   if (id >= MIDAL_NUM_PEDALS) {
     id = 0;
   }
-  if (raw12 > 4095U) raw12 = 4095U;
+  if (raw12 > 4095U) {
+    raw12 = 4095U;
+  }
   /* raw12 is unsigned, so no need to clamp below 0 */
 
   pedal_calibration_t *cal = &s_calibration[id];
@@ -125,21 +127,34 @@ uint16_t pedal_filter_apply(uint8_t id, uint16_t raw12) {
   }
 
   /* Compute safe span */
-  uint16_t span = (cal->max_adc > cal->min_adc) ? (uint16_t)(cal->max_adc - cal->min_adc) : 0U;
+  uint16_t span = (cal->max_adc > cal->min_adc)
+                      ? (uint16_t)(cal->max_adc - cal->min_adc)
+                      : 0U;
   if (span < CAL_MIN_SPAN) {
     span = CAL_MIN_SPAN;
   }
 
   /* Normalize to 0..1 with current [min..max] */
   int32_t num = (int32_t)raw12 - (int32_t)cal->min_adc;
-  if (num < 0) num = 0;
-  if (num > (int32_t)span) num = (int32_t)span;
-  float v = (float)num / (float)span;  /* 0..1 */
+  if (num < 0) {
+    num = 0;
+  }
+  if (num > (int32_t)span) {
+    num = (int32_t)span;
+  }
+  float v = (float)num / (float)span; /* 0..1 */
 
   /* Endpoint hold: snap very close values to exact 0/1 to avoid chatter */
   const float eps = g_cfg.use14bit ? (1.0F / 16383.0F) : (1.0F / 127.0F);
-  if (v < eps) v = 0.0F;
-  else if (v > 1.0F - eps) v = 1.0F;
+  if (v < eps) {
+    v = 0.0F;
+  } else if (v > 1.0F - eps) {
+    v = 1.0F;
+  }
+
+#if IS_ENABLED(CONFIG_MIDAL_INVERT_POLARITY)
+  v = 1.0F - v;
+#endif
 
   const float alpha = (v > s_state[id]) ? g_cfg.s_alpha_up : g_cfg.s_alpha_down;
   s_state[id] = (alpha * v) + ((1.0F - alpha) * s_state[id]);

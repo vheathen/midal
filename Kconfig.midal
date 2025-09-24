@@ -1,5 +1,14 @@
 menu "MIDAL MIDI Interface Core Options"
 
+config MIDAL_INVERT_POLARITY
+    bool "Invert pedal polarity (after calibration, before EMA)"
+    default y
+    help
+      When enabled, normalized pedal value is inverted (v = 1.0 - v)
+      after dynamic calibration and endpoint hold, and before EMA.
+      Use this if the electrical polarity is reversed relative to the
+      expected direction (e.g., higher voltage corresponds to pedal down).
+
 config MIDAL_POLL_HZ
     int "Pedal poll frequency (Hz)"
     default 1000
