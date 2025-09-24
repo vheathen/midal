@@ -20,7 +20,7 @@ static void router_thread(void *, void *, void *);
 
 void midi_router_init(void) { s_txn = 0; }
 
-void midi_router_register(midi_tx_fn tx) {
+void midi_router_register_tx(midi_tx_fn tx) {
   if (s_txn < MAX_TX && tx) {
     s_txs[s_txn++] = tx;
   }

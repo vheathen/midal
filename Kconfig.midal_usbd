@@ -43,4 +43,13 @@ config MIDAL_USBD_20_EXTENSION_DESC
 	help
 	  Set bcdUSB value to 0201 and use default USB 2.0 Extension Descriptor.
 
+config MIDAL_USB_MIDI2_NATIVE
+	bool "Use native MIDI 2.0 Channel Voice for CC on USB"
+	default n
+	help
+	  When enabled, CC events are sent as MIDI 2.0 Channel Voice UMP messages
+	  with 16-bit values over USB (device_next). When disabled, CC are sent as
+	  MIDI 1.0-compatible messages (7-bit, or MSB+LSB for values >127 when
+	  applicable). Enable only if your host/DAW fully supports MIDI 2.0.
+
 endmenu

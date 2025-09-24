@@ -1,5 +1,6 @@
 #include "midi/midi_router.h"
 #include "pedal/pedal.h"
+#include "transports/transport_usb_midi.h"
 #include "usbd/midi.h"
 #include "usbd/usbd.h"
 
@@ -42,12 +43,28 @@ int main(void) {
 
   midi_router_init();
 
+  /* Initialize USB MIDI transport (device_next) and register with router */
+  midi_tx_fn usb_tx = NULL;
+
+  ret = transport_usb_midi_init(&usb_tx);
+  if (ret != 0) {
+    LOG_ERR("USB MIDI transport init failed: %d", ret);
+    return -ENODEV;
+  }
+
+  if (usb_tx) {
+    midi_router_register_tx(usb_tx);
+  } else {
+    LOG_ERR("USB MIDI transport returned NULL tx function");
+    return -ENODEV;
+  }
+
   midi_router_start();
 
   ret = pedal_reader_start();
   if (ret != 0) {
     LOG_ERR("Failed to initialize pedal subsystem: %d", ret);
-    return 0;
+    return ret;
   }
 
 #endif
