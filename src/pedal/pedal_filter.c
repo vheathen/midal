@@ -19,8 +19,9 @@ typedef struct {
   float alpha; // 0..1
   float s_alpha_up;
   float s_alpha_down;
-  uint8_t hysteresis; // in CC steps
-  bool use14bit;      // send CC+LSB
+  uint8_t hysteresis_cc; // hysteresis in 7-bit CC steps (config units)
+  uint16_t hysteresis_lsb; // hysteresis in output LSBs (auto-scaled)
+  bool use14bit; // send CC+LSB
 } pedal_filter_cfg_t;
 
 static pedal_filter_cfg_t g_cfg;
@@ -32,7 +33,12 @@ void pedal_filter_init(void) {
 
   /* Initialize filter configuration from Kconfig/prj.conf */
   g_cfg.use14bit = IS_ENABLED(CONFIG_MIDAL_USE_14BIT_CC);
-  g_cfg.hysteresis = CONFIG_MIDAL_FILTER_HYST;
+  g_cfg.hysteresis_cc = CONFIG_MIDAL_FILTER_HYST;
+  uint32_t hyst_steps = CONFIG_MIDAL_FILTER_HYST;
+  if (hyst_steps > 32U) {
+    hyst_steps = 32U;
+  }
+  g_cfg.hysteresis_lsb = hyst_steps * (g_cfg.use14bit ? 128U : 1U);
 
   /* Base alpha: either manual from Kconfig or auto-computed below */
 #if !defined(CONFIG_MIDAL_FILTER_ALPHA_AUTO)
@@ -161,7 +167,7 @@ uint16_t pedal_filter_apply(uint8_t id, uint16_t raw12) {
   uint16_t span_out = g_cfg.use14bit ? 16383 : 127;
   int32_t q = (int32_t)((s_state[id] * (float)span_out) + 0.5F);
   if (s_last_out[id] != -999) {
-    if (abs(q - s_last_out[id]) < g_cfg.hysteresis) {
+    if (abs(q - s_last_out[id]) < (int32_t)g_cfg.hysteresis_lsb) {
       q = s_last_out[id];
     }
   }
