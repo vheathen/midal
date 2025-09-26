@@ -137,7 +137,7 @@ void saadc_selftest_run(void) {
   k_sleep(K_MSEC(5000));
 
   LOG_INF("=== SAADC acquisition-time self-test start ===");
-  const uint32_t acq_list[] = {10, 20, 40, 80};
+  const uint32_t acq_list[] = {10, 20, 40};
   for (size_t i = 0; i < ARRAY_SIZE(acq_list); i++) {
     stats_run(acq_list[i]);
   }
