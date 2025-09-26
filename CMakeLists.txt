@@ -22,6 +22,7 @@ if(CONFIG_MIDAL_ACQ_SELFTEST)
 else()
 
   target_sources(app PRIVATE
+    src/diag/heartbeat.c
     src/usbd/midi.c
     src/pedal/pedal.c
     src/pedal/pedal_reader.c

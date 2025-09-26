@@ -1,3 +1,4 @@
+#include "diag/heartbeat.h"
 #include "midi/midi_router.h"
 #include "pedal/pedal.h"
 #include "transports/transport_usb_midi.h"
@@ -43,21 +44,28 @@ int main(void) {
 
   /* Initialize USB MIDI transport (device_next) and register with router */
   midi_tx_fn usb_tx = NULL;
+  void *usb_ctx = NULL;
 
-  ret = transport_usb_midi_init(&usb_tx);
+  ret = transport_usb_midi_init(&usb_tx, &usb_ctx);
   if (ret != 0) {
     LOG_ERR("USB MIDI transport init failed: %d", ret);
     return -ENODEV;
   }
 
   if (usb_tx) {
-    midi_router_register_tx(usb_tx);
+    ret = midi_router_register_tx(usb_tx, usb_ctx, "usb");
+    if (ret != 0) {
+      LOG_ERR("Failed to register USB MIDI route: %d", ret);
+      return ret;
+    }
   } else {
     LOG_ERR("USB MIDI transport returned NULL tx function");
     return -ENODEV;
   }
 
   midi_router_start();
+
+  heartbeat_start();
 
   ret = pedal_reader_start();
   if (ret != 0) {

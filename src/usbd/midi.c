@@ -4,6 +4,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(usb_midi, LOG_LEVEL_INF);
 
+#include "transports/transport_usb_midi.h"
+
 static const struct device *const usb_midi_dev =
     DEVICE_DT_GET(DT_NODELABEL(usb_midi));
 
@@ -11,7 +13,7 @@ static void on_midi_device_ready(const struct device *dev, const bool ready) {
   ARG_UNUSED(dev);
   ARG_UNUSED(ready);
 
-  LOG_INF("USB-MIDI2.0 is %s\r\n", ready ? "enabled" : "disabled");
+  transport_usb_notify_ready(ready);
 
   /* Light up the LED (if any) when USB-MIDI2.0 is enabled */
   // if (led.port) {
