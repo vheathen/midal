@@ -1,0 +1,256 @@
+10kOhm + 0.1nF:
+
+1:
+[00:00:05.468,048] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:06.055,053] <inf> saadc_selftest: [acq=10 us] ch7: mean=3262  min=3261  max=3265  p2p=4
+[00:00:06.641,906] <inf> saadc_selftest: [acq=10 us] ch0: mean=3269  min=3268  max=3272  p2p=4
+[00:00:07.228,912] <inf> saadc_selftest: [acq=10 us] ch5: mean=3263  min=3260  max=3265  p2p=5
+[00:00:07.669,006] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.767,974] <inf> saadc_selftest: [acq=20 us] ch7: mean=3263  min=3262  max=3265  p2p=3
+[00:00:09.866,882] <inf> saadc_selftest: [acq=20 us] ch0: mean=3269  min=3268  max=3272  p2p=4
+[00:00:10.965,820] <inf> saadc_selftest: [acq=20 us] ch5: mean=3263  min=3261  max=3266  p2p=5
+[00:00:11.789,978] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.912,750] <inf> saadc_selftest: [acq=40 us] ch7: mean=3263  min=3262  max=3266  p2p=4
+[00:00:16.035,522] <inf> saadc_selftest: [acq=40 us] ch0: mean=3270  min=3268  max=3272  p2p=4
+[00:00:18.158,294] <inf> saadc_selftest: [acq=40 us] ch5: mean=3263  min=3262  max=3265  p2p=3
+[00:00:19.750,335] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.750,335] <inf> saadc_selftest: === SAADC self-test done ===
+
+2:
+[00:00:05.278,533] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.865,539] <inf> saadc_selftest: [acq=10 us] ch7: mean=3270  min=3268  max=3274  p2p=6
+[00:00:06.452,392] <inf> saadc_selftest: [acq=10 us] ch0: mean=3276  min=3274  max=3278  p2p=4
+[00:00:07.039,398] <inf> saadc_selftest: [acq=10 us] ch5: mean=3268  min=3267  max=3271  p2p=4
+[00:00:07.479,492] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.578,430] <inf> saadc_selftest: [acq=20 us] ch7: mean=3267  min=3266  max=3270  p2p=4
+[00:00:09.677,276] <inf> saadc_selftest: [acq=20 us] ch0: mean=3269  min=3267  max=3274  p2p=7
+[00:00:10.776,245] <inf> saadc_selftest: [acq=20 us] ch5: mean=3263  min=3261  max=3265  p2p=4
+[00:00:11.600,372] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.723,144] <inf> saadc_selftest: [acq=40 us] ch7: mean=3265  min=3264  max=3268  p2p=4
+[00:00:15.845,916] <inf> saadc_selftest: [acq=40 us] ch0: mean=3273  min=3271  max=3275  p2p=4
+[00:00:17.968,688] <inf> saadc_selftest: [acq=40 us] ch5: mean=3268  min=3266  max=3270  p2p=4
+[00:00:19.560,729] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.560,729] <inf> saadc_selftest: === SAADC self-test done ===
+
+3:
+[00:00:05.278,503] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.865,509] <inf> saadc_selftest: [acq=10 us] ch7: mean=3282  min=3280  max=3285  p2p=5
+[00:00:06.452,362] <inf> saadc_selftest: [acq=10 us] ch0: mean=3289  min=3287  max=3292  p2p=5
+[00:00:07.039,367] <inf> saadc_selftest: [acq=10 us] ch5: mean=3281  min=3279  max=3283  p2p=4
+[00:00:07.479,461] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.578,399] <inf> saadc_selftest: [acq=20 us] ch7: mean=3283  min=3282  max=3286  p2p=4
+[00:00:09.677,246] <inf> saadc_selftest: [acq=20 us] ch0: mean=3289  min=3287  max=3292  p2p=5
+[00:00:10.776,214] <inf> saadc_selftest: [acq=20 us] ch5: mean=3282  min=3280  max=3284  p2p=4
+[00:00:11.600,341] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.723,114] <inf> saadc_selftest: [acq=40 us] ch7: mean=3283  min=3281  max=3286  p2p=5
+[00:00:15.845,886] <inf> saadc_selftest: [acq=40 us] ch0: mean=3289  min=3288  max=3291  p2p=3
+[00:00:17.968,658] <inf> saadc_selftest: [acq=40 us] ch5: mean=3281  min=3279  max=3284  p2p=5
+[00:00:19.560,699] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.560,699] <inf> saadc_selftest: === SAADC self-test done ===
+
+
+10kOhm:
+
+1:
+[00:00:05.481,445] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:06.068,450] <inf> saadc_selftest: [acq=10 us] ch7: mean=3248  min=3246  max=3250  p2p=4
+[00:00:06.656,524] <inf> saadc_selftest: [acq=10 us] ch0: mean=3254  min=3252  max=3256  p2p=4
+[00:00:07.243,499] <inf> saadc_selftest: [acq=10 us] ch5: mean=3246  min=3244  max=3250  p2p=6
+[00:00:07.683,624] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.782,562] <inf> saadc_selftest: [acq=20 us] ch7: mean=3247  min=3246  max=3249  p2p=3
+[00:00:09.881,469] <inf> saadc_selftest: [acq=20 us] ch0: mean=3253  min=3252  max=3255  p2p=3
+[00:00:10.980,438] <inf> saadc_selftest: [acq=20 us] ch5: mean=3247  min=3245  max=3249  p2p=4
+[00:00:11.804,565] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.927,337] <inf> saadc_selftest: [acq=40 us] ch7: mean=3248  min=3246  max=3250  p2p=4
+[00:00:16.050,109] <inf> saadc_selftest: [acq=40 us] ch0: mean=3254  min=3252  max=3256  p2p=4
+[00:00:18.172,882] <inf> saadc_selftest: [acq=40 us] ch5: mean=3245  min=3242  max=3249  p2p=7
+[00:00:19.764,923] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.764,923] <inf> saadc_selftest: === SAADC self-test done ===
+
+2:
+[00:00:05.276,763] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.863,769] <inf> saadc_selftest: [acq=10 us] ch7: mean=3273  min=3271  max=3275  p2p=4
+[00:00:06.450,622] <inf> saadc_selftest: [acq=10 us] ch0: mean=3279  min=3277  max=3282  p2p=5
+[00:00:07.037,628] <inf> saadc_selftest: [acq=10 us] ch5: mean=3272  min=3270  max=3275  p2p=5
+[00:00:07.477,722] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.576,690] <inf> saadc_selftest: [acq=20 us] ch7: mean=3270  min=3268  max=3272  p2p=4
+[00:00:09.675,598] <inf> saadc_selftest: [acq=20 us] ch0: mean=3275  min=3274  max=3278  p2p=4
+[00:00:10.774,536] <inf> saadc_selftest: [acq=20 us] ch5: mean=3270  min=3268  max=3273  p2p=5
+[00:00:11.598,693] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.721,466] <inf> saadc_selftest: [acq=40 us] ch7: mean=3271  min=3270  max=3273  p2p=3
+[00:00:15.844,207] <inf> saadc_selftest: [acq=40 us] ch0: mean=3277  min=3276  max=3280  p2p=4
+[00:00:17.966,979] <inf> saadc_selftest: [acq=40 us] ch5: mean=3271  min=3270  max=3274  p2p=4
+[00:00:19.559,020] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.559,051] <inf> saadc_selftest: === SAADC self-test done ===
+
+3:
+[00:00:05.277,313] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.864,318] <inf> saadc_selftest: [acq=10 us] ch7: mean=3258  min=3256  max=3262  p2p=6
+[00:00:06.451,171] <inf> saadc_selftest: [acq=10 us] ch0: mean=3266  min=3264  max=3268  p2p=4
+[00:00:07.038,177] <inf> saadc_selftest: [acq=10 us] ch5: mean=3258  min=3257  max=3262  p2p=5
+[00:00:07.478,271] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.577,209] <inf> saadc_selftest: [acq=20 us] ch7: mean=3258  min=3257  max=3261  p2p=4
+[00:00:09.676,055] <inf> saadc_selftest: [acq=20 us] ch0: mean=3264  min=3262  max=3267  p2p=5
+[00:00:10.775,024] <inf> saadc_selftest: [acq=20 us] ch5: mean=3257  min=3255  max=3260  p2p=5
+[00:00:11.599,151] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.721,923] <inf> saadc_selftest: [acq=40 us] ch7: mean=3256  min=3255  max=3258  p2p=3
+[00:00:15.844,696] <inf> saadc_selftest: [acq=40 us] ch0: mean=3263  min=3261  max=3265  p2p=4
+[00:00:17.967,468] <inf> saadc_selftest: [acq=40 us] ch5: mean=3259  min=3258  max=3261  p2p=3
+[00:00:19.559,509] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.559,509] <inf> saadc_selftest: === SAADC self-test done ===
+
+
+
+4.7kOhm:
+
+1:
+[00:00:05.462,799] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:06.049,804] <inf> saadc_selftest: [acq=10 us] ch7: mean=2907  min=2905  max=2910  p2p=5
+[00:00:06.636,657] <inf> saadc_selftest: [acq=10 us] ch0: mean=2907  min=2906  max=2909  p2p=3
+[00:00:07.223,663] <inf> saadc_selftest: [acq=10 us] ch5: mean=2910  min=2909  max=2912  p2p=3
+[00:00:07.663,757] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.762,725] <inf> saadc_selftest: [acq=20 us] ch7: mean=2909  min=2908  max=2911  p2p=3
+[00:00:09.862,152] <inf> saadc_selftest: [acq=20 us] ch0: mean=2907  min=2906  max=2909  p2p=3
+[00:00:10.961,090] <inf> saadc_selftest: [acq=20 us] ch5: mean=2910  min=2908  max=2912  p2p=4
+[00:00:11.785,247] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.907,989] <inf> saadc_selftest: [acq=40 us] ch7: mean=2907  min=2906  max=2909  p2p=3
+[00:00:16.030,761] <inf> saadc_selftest: [acq=40 us] ch0: mean=2906  min=2904  max=2908  p2p=4
+[00:00:18.153,533] <inf> saadc_selftest: [acq=40 us] ch5: mean=2908  min=2907  max=2910  p2p=3
+[00:00:19.745,574] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.745,605] <inf> saadc_selftest: === SAADC self-test done ===
+
+2:
+[00:00:05.281,616] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.868,621] <inf> saadc_selftest: [acq=10 us] ch7: mean=2888  min=2886  max=2891  p2p=5
+[00:00:06.455,474] <inf> saadc_selftest: [acq=10 us] ch0: mean=2887  min=2886  max=2889  p2p=3
+[00:00:07.042,480] <inf> saadc_selftest: [acq=10 us] ch5: mean=2890  min=2889  max=2892  p2p=3
+[00:00:07.482,574] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.581,542] <inf> saadc_selftest: [acq=20 us] ch7: mean=2889  min=2888  max=2891  p2p=3
+[00:00:09.680,450] <inf> saadc_selftest: [acq=20 us] ch0: mean=2888  min=2887  max=2891  p2p=4
+[00:00:10.779,388] <inf> saadc_selftest: [acq=20 us] ch5: mean=2892  min=2890  max=2894  p2p=4
+[00:00:11.603,546] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.726,318] <inf> saadc_selftest: [acq=40 us] ch7: mean=2889  min=2888  max=2891  p2p=3
+[00:00:15.849,060] <inf> saadc_selftest: [acq=40 us] ch0: mean=2888  min=2886  max=2890  p2p=4
+[00:00:17.971,832] <inf> saadc_selftest: [acq=40 us] ch5: mean=2891  min=2889  max=2893  p2p=4
+[00:00:19.563,873] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.563,903] <inf> saadc_selftest: === SAADC self-test done ===
+
+3:
+[00:00:05.283,386] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.870,391] <inf> saadc_selftest: [acq=10 us] ch7: mean=2911  min=2909  max=2914  p2p=5
+[00:00:06.457,244] <inf> saadc_selftest: [acq=10 us] ch0: mean=2911  min=2909  max=2913  p2p=4
+[00:00:07.044,250] <inf> saadc_selftest: [acq=10 us] ch5: mean=2914  min=2913  max=2917  p2p=4
+[00:00:07.484,344] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.583,312] <inf> saadc_selftest: [acq=20 us] ch7: mean=2913  min=2911  max=2915  p2p=4
+[00:00:09.682,220] <inf> saadc_selftest: [acq=20 us] ch0: mean=2911  min=2910  max=2913  p2p=3
+[00:00:10.781,158] <inf> saadc_selftest: [acq=20 us] ch5: mean=2914  min=2913  max=2917  p2p=4
+[00:00:11.605,316] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.728,088] <inf> saadc_selftest: [acq=40 us] ch7: mean=2912  min=2911  max=2915  p2p=4
+[00:00:15.850,830] <inf> saadc_selftest: [acq=40 us] ch0: mean=2911  min=2910  max=2913  p2p=3
+[00:00:17.973,602] <inf> saadc_selftest: [acq=40 us] ch5: mean=2914  min=2912  max=2916  p2p=4
+[00:00:19.565,643] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.565,673] <inf> saadc_selftest: === SAADC self-test done ===
+
+
+
+4.7kOhm + 0.1nF:
+
+1:
+[00:00:05.438,171] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:06.025,177] <inf> saadc_selftest: [acq=10 us] ch7: mean=2903  min=2895  max=2912  p2p=17
+[00:00:06.612,030] <inf> saadc_selftest: [acq=10 us] ch0: mean=2899  min=2889  max=2906  p2p=17
+[00:00:07.199,035] <inf> saadc_selftest: [acq=10 us] ch5: mean=2910  min=2879  max=2920  p2p=41
+[00:00:07.639,129] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.738,098] <inf> saadc_selftest: [acq=20 us] ch7: mean=2906  min=2901  max=2918  p2p=17
+[00:00:09.837,005] <inf> saadc_selftest: [acq=20 us] ch0: mean=2898  min=2896  max=2901  p2p=5
+[00:00:10.935,943] <inf> saadc_selftest: [acq=20 us] ch5: mean=2900  min=2899  max=2903  p2p=4
+[00:00:11.760,101] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.882,934] <inf> saadc_selftest: [acq=40 us] ch7: mean=2897  min=2895  max=2899  p2p=4
+[00:00:16.005,676] <inf> saadc_selftest: [acq=40 us] ch0: mean=2895  min=2895  max=2897  p2p=2
+[00:00:18.128,479] <inf> saadc_selftest: [acq=40 us] ch5: mean=2898  min=2897  max=2901  p2p=4
+[00:00:19.720,520] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.720,520] <inf> saadc_selftest: === SAADC self-test done ===
+
+2:
+[00:00:05.286,895] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.873,901] <inf> saadc_selftest: [acq=10 us] ch7: mean=2860  min=2858  max=2862  p2p=4
+[00:00:06.460,754] <inf> saadc_selftest: [acq=10 us] ch0: mean=2857  min=2856  max=2859  p2p=3
+[00:00:07.047,760] <inf> saadc_selftest: [acq=10 us] ch5: mean=2861  min=2859  max=2864  p2p=5
+[00:00:07.487,854] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.586,822] <inf> saadc_selftest: [acq=20 us] ch7: mean=2859  min=2858  max=2862  p2p=4
+[00:00:09.685,729] <inf> saadc_selftest: [acq=20 us] ch0: mean=2858  min=2856  max=2861  p2p=5
+[00:00:10.784,667] <inf> saadc_selftest: [acq=20 us] ch5: mean=2862  min=2861  max=2864  p2p=3
+[00:00:11.608,825] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 1 LSB (B=ch0)
+[00:00:13.731,597] <inf> saadc_selftest: [acq=40 us] ch7: mean=2860  min=2858  max=2862  p2p=4
+[00:00:15.854,339] <inf> saadc_selftest: [acq=40 us] ch0: mean=2859  min=2858  max=2861  p2p=3
+[00:00:17.977,111] <inf> saadc_selftest: [acq=40 us] ch5: mean=2863  min=2861  max=2865  p2p=4
+[00:00:19.569,152] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.569,183] <inf> saadc_selftest: === SAADC self-test done ===
+
+3:
+[00:00:05.278,015] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.865,020] <inf> saadc_selftest: [acq=10 us] ch7: mean=2835  min=2833  max=2838  p2p=5
+[00:00:06.451,873] <inf> saadc_selftest: [acq=10 us] ch0: mean=2834  min=2832  max=2836  p2p=4
+[00:00:07.038,879] <inf> saadc_selftest: [acq=10 us] ch5: mean=2837  min=2836  max=2839  p2p=3
+[00:00:07.478,973] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.577,911] <inf> saadc_selftest: [acq=20 us] ch7: mean=2835  min=2833  max=2837  p2p=4
+[00:00:09.676,757] <inf> saadc_selftest: [acq=20 us] ch0: mean=2832  min=2830  max=2834  p2p=4
+[00:00:10.775,726] <inf> saadc_selftest: [acq=20 us] ch5: mean=2834  min=2832  max=2837  p2p=5
+[00:00:11.599,853] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.722,625] <inf> saadc_selftest: [acq=40 us] ch7: mean=2833  min=2831  max=2835  p2p=4
+[00:00:15.845,397] <inf> saadc_selftest: [acq=40 us] ch0: mean=2831  min=2830  max=2833  p2p=3
+[00:00:17.968,170] <inf> saadc_selftest: [acq=40 us] ch5: mean=2835  min=2833  max=2837  p2p=4
+[00:00:19.560,211] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.560,211] <inf> saadc_selftest: === SAADC self-test done ===
+
+No RC:
+
+1:
+[00:00:05.480,743] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:06.067,749] <inf> saadc_selftest: [acq=10 us] ch7: mean=3692  min=3689  max=3695  p2p=6
+[00:00:06.654,602] <inf> saadc_selftest: [acq=10 us] ch0: mean=3705  min=3703  max=3708  p2p=5
+[00:00:07.241,607] <inf> saadc_selftest: [acq=10 us] ch5: mean=3688  min=3686  max=3692  p2p=6
+[00:00:07.681,701] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.780,670] <inf> saadc_selftest: [acq=20 us] ch7: mean=3693  min=3691  max=3695  p2p=4
+[00:00:09.879,577] <inf> saadc_selftest: [acq=20 us] ch0: mean=3705  min=3703  max=3708  p2p=5
+[00:00:10.978,515] <inf> saadc_selftest: [acq=20 us] ch5: mean=3687  min=3685  max=3690  p2p=5
+[00:00:11.802,673] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.925,445] <inf> saadc_selftest: [acq=40 us] ch7: mean=3692  min=3690  max=3694  p2p=4
+[00:00:16.048,217] <inf> saadc_selftest: [acq=40 us] ch0: mean=3705  min=3703  max=3707  p2p=4
+[00:00:18.170,989] <inf> saadc_selftest: [acq=40 us] ch5: mean=3686  min=3684  max=3688  p2p=4
+[00:00:19.763,031] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.763,031] <inf> saadc_selftest: === SAADC self-test done ===
+
+2:
+[00:00:05.280,334] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.867,340] <inf> saadc_selftest: [acq=10 us] ch7: mean=3683  min=3681  max=3686  p2p=5
+[00:00:06.454,193] <inf> saadc_selftest: [acq=10 us] ch0: mean=3695  min=3693  max=3697  p2p=4
+[00:00:07.041,198] <inf> saadc_selftest: [acq=10 us] ch5: mean=3677  min=3675  max=3679  p2p=4
+[00:00:07.481,292] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.580,230] <inf> saadc_selftest: [acq=20 us] ch7: mean=3681  min=3680  max=3684  p2p=4
+[00:00:09.679,077] <inf> saadc_selftest: [acq=20 us] ch0: mean=3694  min=3692  max=3697  p2p=5
+[00:00:10.778,045] <inf> saadc_selftest: [acq=20 us] ch5: mean=3676  min=3674  max=3678  p2p=4
+[00:00:11.602,172] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.724,945] <inf> saadc_selftest: [acq=40 us] ch7: mean=3680  min=3678  max=3682  p2p=4
+[00:00:15.847,717] <inf> saadc_selftest: [acq=40 us] ch0: mean=3692  min=3689  max=3695  p2p=6
+[00:00:17.970,489] <inf> saadc_selftest: [acq=40 us] ch5: mean=3675  min=3673  max=3677  p2p=4
+[00:00:19.562,530] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:19.562,530] <inf> saadc_selftest: === SAADC self-test done ===
+
+3:
+[00:00:05.278,900] <inf> saadc_selftest: === SAADC acquisition-time self-test start ===
+[00:00:05.865,905] <inf> saadc_selftest: [acq=10 us] ch7: mean=3673  min=3671  max=3676  p2p=5
+[00:00:06.452,911] <inf> saadc_selftest: [acq=10 us] ch0: mean=3688  min=3685  max=3692  p2p=7
+[00:00:07.039,886] <inf> saadc_selftest: [acq=10 us] ch5: mean=3674  min=3671  max=3678  p2p=7
+[00:00:07.480,010] <inf> saadc_selftest: [acq=10 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:08.578,948] <inf> saadc_selftest: [acq=20 us] ch7: mean=3681  min=3679  max=3684  p2p=5
+[00:00:09.677,856] <inf> saadc_selftest: [acq=20 us] ch0: mean=3695  min=3693  max=3698  p2p=5
+[00:00:10.776,824] <inf> saadc_selftest: [acq=20 us] ch5: mean=3676  min=3674  max=3679  p2p=5
+[00:00:11.600,952] <inf> saadc_selftest: [acq=20 us] A->B->A worst delta on ch7 = 2 LSB (B=ch0)
+[00:00:13.723,724] <inf> saadc_selftest: [acq=40 us] ch7: mean=3681  min=3680  max=3684  p2p=4
+[00:00:15.846,496] <inf> saadc_selftest: [acq=40 us] ch0: mean=3692  min=3691  max=3696  p2p=5
+[00:00:17.969,268] <inf> saadc_selftest: [acq=40 us] ch5: mean=3674  min=3672  max=3676  p2p=4
+[00:00:19.561,309] <inf> saadc_selftest: [acq=40 us] A->B->A worst delta on ch7 = 3 LSB (B=ch0)
+[00:00:19.561,309] <inf> saadc_selftest: === SAADC self-test done ===
+
+

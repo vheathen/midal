@@ -94,7 +94,7 @@ void pedal_filter_init(void) {
   for (int i = 0; i < MIDAL_NUM_PEDALS; i++) {
     s_state[i] = 0.0F;
     s_last_out[i] = -999;
-    s_calibration[i].min_adc = 248;  // 0.3V starting point
+    s_calibration[i].min_adc = 500;  // 0.5V starting point
     s_calibration[i].max_adc = 4095; // Will be set on first reading
     s_calibration[i].initialized = false;
   }
@@ -115,7 +115,7 @@ uint16_t pedal_filter_apply(uint8_t id, uint16_t raw12) {
   if (!cal->initialized) {
     /* First sample defines provisional upper bound (pedal at rest/up) */
     cal->max_adc = raw12;
-    cal->min_adc = raw12; /* will move down as we discover lower values */
+    // cal->min_adc = raw12; /* will move down as we discover lower values */
     cal->initialized = true;
   } else {
     if ((uint16_t)(raw12 + CAL_MARGIN) < cal->min_adc) {

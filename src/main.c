@@ -28,18 +28,16 @@ int main(void) {
 
   LOG_INF("USB up\r\n");
 
+#if IS_ENABLED(CONFIG_MIDAL_ACQ_SELFTEST)
+  saadc_selftest_run();
+#else
+
   ret = usbd_midi_init();
 
   if (ret != 0) {
     LOG_ERR("Failed to init USB MIDI: %d", ret);
     return 0;
   }
-
-#if IS_ENABLED(CONFIG_MIDAL_ACQ_SELFTEST)
-  saadc_selftest_run();
-#endif
-
-#if !IS_ENABLED(CONFIG_MIDAL_ACQ_SELFTEST)
 
   midi_router_init();
 
