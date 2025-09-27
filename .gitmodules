@@ -1,0 +1,3 @@
+[submodule "modules/lib/zephyr-ble-midi"]
+	path = modules/lib/zephyr-ble-midi
+	url = https://github.com/stuffmatic/zephyr-ble-midi.git
