@@ -127,20 +127,16 @@ static int usb_midi_tx(void *ctx_ptr, const midi_event_t *ev) {
   const uint8_t cc = ev->cc.cc & 0x7F;
   const uint16_t v = ev->cc.value; /* 0..127 or 0..16383 */
 
-  uint8_t v7_scaled = (uint8_t)((v > 16383U ? 16383U : v) >> 7);
+  uint8_t v7_scaled = 0;
+  if (IS_ENABLED(CONFIG_MIDAL_USE_14BIT_CC)) {
+    uint16_t v_clamped = (v > 16383U) ? 16383U : v;
+    v7_scaled = (uint8_t)((v_clamped + 0x40U) >> 7); /* rounding */
+  } else {
+    v7_scaled = (uint8_t)((v > 127U) ? 127U : v);
+  }
+
   LOG_DBG("USB CC7 ch=%u cc=%u val=%u (scaled)", ch, cc, v7_scaled);
   send_cc7(ctx, ch, cc, v7_scaled);
-
-#if IS_ENABLED(CONFIG_MIDAL_USE_14BIT_CC)
-  if (cc < 32) {
-    uint16_t v14 = (v > 16383U) ? 16383U : v;
-    uint8_t msb = (uint8_t)((v14 >> 7) & 0x7F);
-    uint8_t lsb = (uint8_t)(v14 & 0x7F);
-    LOG_DBG("USB CC14 ch=%u cc=%u val=%u", ch, cc, v14);
-    send_cc7(ctx, ch, cc, msb);
-    send_cc7(ctx, ch, (uint8_t)(cc + 32), lsb);
-  }
-#endif
 
 #if IS_ENABLED(CONFIG_MIDAL_USB_MIDI2_NATIVE)
   uint16_t v16 = (v > 16383U) ? 65535U : scale14_to16(v);
