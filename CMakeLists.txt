@@ -1,3 +1,7 @@
+list(APPEND ZEPHYR_EXTRA_MODULES
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/lib/zephyr-ble-midi
+)
+
 cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
@@ -31,7 +35,7 @@ else()
     src/midi/midi_codec.c
     src/midi/midi_router.c
     src/transports/transport_usb_midi.c
-    # src/transports/transport_ble_midi.c
+    src/transports/transport_ble_midi.c
     # src/transports/transport_uart_midi.c
   )
 

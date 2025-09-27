@@ -1,6 +1,7 @@
 #include "diag/heartbeat.h"
 #include "midi/midi_router.h"
 #include "pedal/pedal.h"
+#include "transports/transport_ble_midi.h"
 #include "transports/transport_usb_midi.h"
 #include "usbd/midi.h"
 #include "usbd/usbd.h"
@@ -16,6 +17,16 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 #if IS_ENABLED(CONFIG_MIDAL_ACQ_SELFTEST)
 #include "diag/saadc_selftest.h"
 #endif
+
+// For testing
+#include <zephyr/drivers/gpio.h>
+/* The devicetree node identifier for the "led0" alias. */
+#define LED0_NODE DT_ALIAS(led0)
+/*
+ * A build error on this line means your board is unsupported.
+ * See the sample documentation for information on how to fix this.
+ */
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
 int main(void) {
 
@@ -63,6 +74,20 @@ int main(void) {
     return -ENODEV;
   }
 
+#if IS_ENABLED(CONFIG_BLE_MIDI)
+  midi_tx_fn ble_tx = NULL;
+  void *ble_ctx = NULL;
+  ret = transport_ble_midi_init(&ble_tx, &ble_ctx);
+  if (ret != 0) {
+    LOG_WRN("BLE MIDI transport init failed: %d", ret);
+  } else if (ble_tx) {
+    ret = midi_router_register_tx(ble_tx, ble_ctx, "ble");
+    if (ret != 0) {
+      LOG_WRN("Failed to register BLE MIDI route: %d", ret);
+    }
+  }
+#endif
+
   midi_router_start();
 
   heartbeat_start();
@@ -74,6 +99,24 @@ int main(void) {
   }
 
 #endif
+
+  if (!gpio_is_ready_dt(&led)) {
+    return 0;
+  }
+
+  ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+  if (ret < 0) {
+    return 0;
+  }
+
+  while (1) {
+    ret = gpio_pin_toggle_dt(&led);
+    if (ret < 0) {
+      return 0;
+    }
+
+    k_sleep(K_MSEC(500));
+  }
 
   return 0;
 }

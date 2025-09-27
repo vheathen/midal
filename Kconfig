@@ -9,4 +9,6 @@ menu "MIDAL MIDI Interface USB Device"
 rsource "Kconfig.midal_usbd"
 endmenu
 
+rsource "modules/lib/zephyr-ble-midi/ble_midi/Kconfig"
+
 source "Kconfig.zephyr"
