@@ -39,8 +39,8 @@ static void trigger_pedals_reading(struct k_timer *tmr) {
 static void reader_timer_start(void) {
   k_timer_init(&poll_tmr, trigger_pedals_reading, NULL);
 
-  uint32_t period_ms = DIV_ROUND_UP(1000, CONFIG_MIDAL_POLL_HZ);
-  k_timer_start(&poll_tmr, K_MSEC(period_ms), K_MSEC(period_ms));
+  uint32_t period_us = DIV_ROUND_UP(1000000U, CONFIG_MIDAL_POLL_HZ);
+  k_timer_start(&poll_tmr, K_USEC(period_us), K_USEC(period_us));
 
   LOG_INF("Pedal sensors polling started at %d Hz", CONFIG_MIDAL_POLL_HZ);
 }

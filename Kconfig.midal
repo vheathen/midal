@@ -106,7 +106,7 @@ config MIDAL_PEDAL_LOG
     help
       When enabled, the firmware logs the pedal values to the console.
 
-config MIDAL_PEDAL_LOG_RATE
+config MIDAL_PEDAL_LOG_RATE_MS
     int "Pedal log rate (ms)"
     default 250
     range 1 1000

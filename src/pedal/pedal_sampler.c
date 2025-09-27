@@ -58,7 +58,7 @@ typedef struct {
 static void log_pedal_state(size_t pedal_idx, uint16_t raw, uint16_t filtered) {
 #if IS_ENABLED(CONFIG_MIDAL_PEDAL_LOG)
   uint32_t now = k_uptime_get_32();
-  if (now - last_log_time[pedal_idx] >= CONFIG_MIDAL_PEDAL_LOG_RATE) {
+  if (now - last_log_time[pedal_idx] >= CONFIG_MIDAL_PEDAL_LOG_RATE_MS) {
     pedal_calibration_t cal;
     pedal_filter_get_calibration(pedal_idx, &cal);
     LOG_INF("%s pedal: raw=%u filtered=%u CC%d [cal: %u-%u %s]",
