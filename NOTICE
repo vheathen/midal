@@ -1,0 +1,4 @@
+This project incorporates components licensed under the Apache License
+2.0. In particular, it embeds the "zephyr-ble-midi" module by Tomas Fälth
+(https://github.com/stuffmatic/zephyr-ble-midi). The original license can
+be found in modules/lib/zephyr-ble-midi/LICENSE.
