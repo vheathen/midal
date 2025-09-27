@@ -29,11 +29,23 @@ static const struct bt_data scan_resp[] = {
             sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
-static void start_advertising(void) {
+static void start_advertising(void);
+static void start_advertising_work(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(adv_retry_work, start_advertising_work);
+
+static void start_advertising_work(struct k_work *work) {
+  ARG_UNUSED(work);
+
+  const struct bt_le_adv_param *param = BT_LE_ADV_CONN_FAST_2;
   int err =
-      bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, adv_data, ARRAY_SIZE(adv_data),
-                      scan_resp, ARRAY_SIZE(scan_resp));
+      bt_le_adv_start(param, adv_data, ARRAY_SIZE(adv_data), scan_resp, ARRAY_SIZE(scan_resp));
   if (err == -EALREADY) {
+    return;
+  }
+
+  if (err == -ENOMEM) {
+    LOG_WRN("BLE advertising buffer full; retrying");
+    k_work_reschedule(&adv_retry_work, K_MSEC(500));
     return;
   }
 
@@ -42,6 +54,11 @@ static void start_advertising(void) {
   } else {
     LOG_INF("BLE MIDI advertising started");
   }
+}
+
+static void start_advertising(void) {
+  k_work_cancel_delayable(&adv_retry_work);
+  k_work_reschedule(&adv_retry_work, K_NO_WAIT);
 }
 
 static void ble_ready_handler(ble_midi_ready_state_t state) {
