@@ -1,9 +1,11 @@
-# MIDAL MIDI Interface Firmware
+# MIDAL MIDI Interface
 
 Firmware for the **MIDAL** piano pedal interface built around the
 ProMicro nRF52840. The device samples three optical pedals (damper,
 sostenuto, soft) at high resolution and streams the data over USB MIDI 2.0,
 classic MIDI 1.0 and Bluetooth LE MIDI.
+
+![Perfboard main view](hardware/pics/perfboard-05.png)
 
 ## Features
 
@@ -19,6 +21,8 @@ classic MIDI 1.0 and Bluetooth LE MIDI.
 - Heartbeat and logging infrastructure for runtime diagnostics.
 
 ## Hardware Summary
+
+The hardware is described in detail in the [hardware README](hardware/README.md).
 
 - Base board: ProMicro nRF52840.
 - Pedal inputs:
@@ -36,10 +40,14 @@ classic MIDI 1.0 and Bluetooth LE MIDI.
   - `BTN_BLE`: short = disconnect, long = forget pairings
   - `BTN_USB`: short = toggle auto-off, long = clear calibration
 
+![Perfboard rev. 1 - 01](hardware/pics/perfboard-01.png)
+![Perfboard rev. 1 - 02](hardware/pics/perfboard-02.png)
+![Perfboard rev. 1 - 04](hardware/pics/perfboard-04.png)
+
 ## Firmware Architecture
 
 ```
-pedal_sampler (SAADC + filters) -> midi_router -> transports (USB / BLE)
+pedal_sampler (SAADC + filters) -> midi_router -> transports (USB / BLE / DIN)
 ```
 
 - `src/pedal/pedal_sampler.c`: configures ADC channels, manages filtering and
