@@ -1,0 +1,19 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+ColumnLimit: 130
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+BreakBeforeBraces: Attach
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+SpaceAfterCStyleCast: true
+PointerAlignment: Right
+AlwaysBreakBeforeMultilineStringLiterals: true
+BinPackArguments: false
+BinPackParameters: false
+# PenaltyBreakBeforeFirstCallParameter: 200
