@@ -33,6 +33,8 @@ sostenuto, soft) at high resolution and transmits MIDI CC messages simultaneousl
 
 The hardware is described in detail in the [hardware README](hardware/README.md).
 
+Schematic and PCB can be found on OSHWLab: https://oshwlab.com/vheathen/midal
+
 - Base board: ProMicro nRF52840.
 - Pedal inputs:
   - Damper – P0.31 / NRF_SAADC_AIN7

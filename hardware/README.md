@@ -10,7 +10,9 @@ MIDAL is a standalone MIDI interface for acoustic-style piano pedals, built arou
 
 The project was originally created to connect my own Kawai GFP-3 pedal block to a computer (and/or Apple Vision Pro) running Pianoteq, but the design is intended to work with any pedal block that shares the same pinout and power requirements.
 
-Development began on a solderless breadboard, moves to a perfboard pilot soon, and will progress to a dedicated PCB once the electronics and firmware stabilize.
+Development began on a solderless breadboard, then moved to a perfboard pilot, and will progress to a dedicated PCB once the electronics and firmware stabilize.
+
+Schematic and PCB published on OSHWLab: https://oshwlab.com/vheathen/midal
 
 ## Hardware Features & Functions
 
