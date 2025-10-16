@@ -1,3 +1,4 @@
+#include "diag/stats.h"
 #include "midi/midi_types.h"
 #include "zbus_channels.h"
 
@@ -54,8 +55,8 @@ int transport_usb_midi_init(void) {
 
   /* Start transport thread */
   k_thread_create(&usb_midi_thread_data, usb_midi_stack,
-                  K_THREAD_STACK_SIZEOF(usb_midi_stack), usb_midi_thread,
-                  NULL, NULL, NULL, USB_MIDI_THREAD_PRIORITY, 0, K_NO_WAIT);
+                  K_THREAD_STACK_SIZEOF(usb_midi_stack), usb_midi_thread, NULL,
+                  NULL, NULL, USB_MIDI_THREAD_PRIORITY, 0, K_NO_WAIT);
   k_thread_name_set(&usb_midi_thread_data, "usb-midi");
 
   LOG_INF("USB MIDI transport initialized and subscribed to zbus");
@@ -202,4 +203,13 @@ static void usb_midi_thread(void *p1, void *p2, void *p3) {
       atomic_inc(&s_usb_ctx.dropped);
     }
   }
+}
+
+void transport_usb_get_stats(struct transport_stats *stats) {
+  if (stats == NULL) {
+    return;
+  }
+
+  stats->sent = (uint32_t)atomic_get(&s_usb_ctx.sent);
+  stats->dropped = (uint32_t)atomic_get(&s_usb_ctx.dropped);
 }

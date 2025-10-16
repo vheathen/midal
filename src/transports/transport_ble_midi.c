@@ -1,5 +1,5 @@
 #include "transport_ble_midi.h"
-
+#include "diag/stats.h"
 #include "midi/midi_types.h"
 #include "zbus_channels.h"
 
@@ -51,8 +51,8 @@ static void start_advertising_work(struct k_work *work) {
   ARG_UNUSED(work);
 
   const struct bt_le_adv_param *param = BT_LE_ADV_CONN_FAST_2;
-  int err =
-      bt_le_adv_start(param, adv_data, ARRAY_SIZE(adv_data), scan_resp, ARRAY_SIZE(scan_resp));
+  int err = bt_le_adv_start(param, adv_data, ARRAY_SIZE(adv_data), scan_resp,
+                            ARRAY_SIZE(scan_resp));
   if (err == -EALREADY) {
     return;
   }
@@ -168,8 +168,8 @@ int transport_ble_midi_init(void) {
 
   /* Start transport thread */
   k_thread_create(&ble_midi_thread_data, ble_midi_stack,
-                  K_THREAD_STACK_SIZEOF(ble_midi_stack), ble_midi_thread,
-                  NULL, NULL, NULL, BLE_MIDI_THREAD_PRIORITY, 0, K_NO_WAIT);
+                  K_THREAD_STACK_SIZEOF(ble_midi_stack), ble_midi_thread, NULL,
+                  NULL, NULL, BLE_MIDI_THREAD_PRIORITY, 0, K_NO_WAIT);
   k_thread_name_set(&ble_midi_thread_data, "ble-midi");
 
   start_advertising();
@@ -212,4 +212,13 @@ static void ble_midi_thread(void *p1, void *p2, void *p3) {
       atomic_inc(&ble_ctx.dropped);
     }
   }
+}
+
+void transport_ble_get_stats(struct transport_stats *stats) {
+  if (stats == NULL) {
+    return;
+  }
+
+  stats->sent = (uint32_t)atomic_get(&ble_ctx.sent);
+  stats->dropped = (uint32_t)atomic_get(&ble_ctx.dropped);
 }

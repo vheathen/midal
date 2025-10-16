@@ -1,4 +1,5 @@
 #include "diag/heartbeat.h"
+#include "diag/stats.h"
 #include "pedal/pedal.h"
 #include "transports/transport_ble_midi.h"
 #include "transports/transport_usb_midi.h"
@@ -48,6 +49,13 @@ int main(void) {
   if (ret != 0) {
     LOG_ERR("Failed to init USB MIDI: %d", ret);
     return 0;
+  }
+
+  /* Initialize stats system - listener + aggregator */
+  ret = midal_stats_init();
+  if (ret != 0) {
+    LOG_ERR("Stats init failed: %d", ret);
+    return -ENODEV;
   }
 
   /* Initialize USB MIDI transport - subscribes to zbus directly */
