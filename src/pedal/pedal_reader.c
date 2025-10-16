@@ -78,7 +78,9 @@ static void pedal_reader_thread(void *p1, void *p2, void *p3) {
     if (err == -EBUSY) {
       LOG_WRN("ADC busy, skipping cycle");
       continue;
-    } else if (err < 0) {
+    }
+
+    if (err < 0) {
       LOG_ERR("ADC async read failed: %d", err);
       continue;
     }
@@ -86,9 +88,11 @@ static void pedal_reader_thread(void *p1, void *p2, void *p3) {
     int rc = k_poll(&adc_event, 1, K_MSEC(ADC_TIMEOUT_MS));
     if (rc == -EAGAIN) {
       LOG_ERR("ADC conversion timeout");
-      (void)nrfx_saadc_abort();
+      nrfx_saadc_abort();
       continue;
-    } else if (rc < 0) {
+    }
+
+    if (rc < 0) {
       LOG_ERR("ADC poll error: %d", rc);
       continue;
     }
