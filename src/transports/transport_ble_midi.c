@@ -1,23 +1,37 @@
 #include "transport_ble_midi.h"
 
 #include "midi/midi_types.h"
+#include "zbus_channels.h"
 
 #include <ble_midi/ble_midi.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/atomic.h>
+#include <zephyr/zbus/zbus.h>
 
 LOG_MODULE_REGISTER(transport_ble_midi, LOG_LEVEL_INF);
 
+/* Zbus message subscriber for MIDI events */
+ZBUS_MSG_SUBSCRIBER_DEFINE(ble_midi_sub);
+
 struct transport_ble_ctx {
   atomic_t ready;
+  atomic_t sent;
+  atomic_t dropped;
 };
 
 static struct transport_ble_ctx ble_ctx = {
     .ready = ATOMIC_INIT(0),
 };
+
+#define BLE_MIDI_THREAD_PRIORITY 5
+#define BLE_MIDI_THREAD_STACK_SIZE 1024
+static struct k_thread ble_midi_thread_data;
+K_THREAD_STACK_DEFINE(ble_midi_stack, BLE_MIDI_THREAD_STACK_SIZE);
+static void ble_midi_thread(void *, void *, void *);
 
 static const struct bt_data adv_data[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR),
@@ -129,7 +143,7 @@ static int ble_midi_tx(void *ctx_ptr, const midi_event_t *ev) {
   return 0;
 }
 
-int transport_ble_midi_init(midi_tx_fn *out_tx, void **out_ctx) {
+int transport_ble_midi_init(void) {
   int err = bt_enable(NULL);
   if (err && err != -EALREADY) {
     LOG_ERR("bt_enable failed (%d)", err);
@@ -142,16 +156,60 @@ int transport_ble_midi_init(midi_tx_fn *out_tx, void **out_ctx) {
     return -EIO;
   }
 
+  atomic_clear(&ble_ctx.sent);
+  atomic_clear(&ble_ctx.dropped);
+
+  /* Subscribe to MIDI event channel */
+  int ret = zbus_chan_add_obs(&midi_event_chan, &ble_midi_sub, K_MSEC(100));
+  if (ret != 0) {
+    LOG_ERR("Failed to subscribe BLE MIDI to midi_event_chan: %d", ret);
+    return ret;
+  }
+
+  /* Start transport thread */
+  k_thread_create(&ble_midi_thread_data, ble_midi_stack,
+                  K_THREAD_STACK_SIZEOF(ble_midi_stack), ble_midi_thread,
+                  NULL, NULL, NULL, BLE_MIDI_THREAD_PRIORITY, 0, K_NO_WAIT);
+  k_thread_name_set(&ble_midi_thread_data, "ble-midi");
+
   start_advertising();
 
-  if (out_tx) {
-    *out_tx = ble_midi_tx;
-  }
-  if (out_ctx) {
-    *out_ctx = &ble_ctx;
-  }
-
+  LOG_INF("BLE MIDI transport initialized and subscribed to zbus");
   return 0;
 }
 
 bool transport_ble_midi_ready(void) { return atomic_get(&ble_ctx.ready) != 0; }
+
+static void ble_midi_thread(void *p1, void *p2, void *p3) {
+  ARG_UNUSED(p1);
+  ARG_UNUSED(p2);
+  ARG_UNUSED(p3);
+
+  const struct zbus_channel *chan;
+  midi_event_t ev;
+
+  LOG_INF("BLE MIDI transport thread started, waiting for events...");
+
+  while (true) {
+    /* Wait for MIDI event from zbus channel */
+    int ret = zbus_sub_wait_msg(&ble_midi_sub, &chan, &ev, K_FOREVER);
+    if (ret != 0) {
+      LOG_ERR("BLE MIDI zbus_sub_wait_msg failed: %d", ret);
+      continue;
+    }
+
+    /* Verify correct channel */
+    if (chan != &midi_event_chan) {
+      LOG_WRN("BLE MIDI received event from unexpected channel: %p", chan);
+      continue;
+    }
+
+    /* Process the event */
+    ret = ble_midi_tx(&ble_ctx, &ev);
+    if (ret == 0) {
+      atomic_inc(&ble_ctx.sent);
+    } else {
+      atomic_inc(&ble_ctx.dropped);
+    }
+  }
+}

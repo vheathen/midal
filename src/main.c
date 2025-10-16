@@ -53,41 +53,22 @@ int main(void) {
 
   midi_router_init();
 
-  /* Initialize USB MIDI transport (device_next) and register with router */
-  midi_tx_fn usb_tx = NULL;
-  void *usb_ctx = NULL;
-
-  ret = transport_usb_midi_init(&usb_tx, &usb_ctx);
+  /* Initialize USB MIDI transport - subscribes to zbus directly */
+  ret = transport_usb_midi_init();
   if (ret != 0) {
     LOG_ERR("USB MIDI transport init failed: %d", ret);
     return -ENODEV;
   }
 
-  if (usb_tx) {
-    ret = midi_router_register_tx(usb_tx, usb_ctx, "usb");
-    if (ret != 0) {
-      LOG_ERR("Failed to register USB MIDI route: %d", ret);
-      return ret;
-    }
-  } else {
-    LOG_ERR("USB MIDI transport returned NULL tx function");
-    return -ENODEV;
-  }
-
 #if IS_ENABLED(CONFIG_BLE_MIDI)
-  midi_tx_fn ble_tx = NULL;
-  void *ble_ctx = NULL;
-  ret = transport_ble_midi_init(&ble_tx, &ble_ctx);
+  /* Initialize BLE MIDI transport - subscribes to zbus directly */
+  ret = transport_ble_midi_init();
   if (ret != 0) {
     LOG_WRN("BLE MIDI transport init failed: %d", ret);
-  } else if (ble_tx) {
-    ret = midi_router_register_tx(ble_tx, ble_ctx, "ble");
-    if (ret != 0) {
-      LOG_WRN("Failed to register BLE MIDI route: %d", ret);
-    }
   }
 #endif
 
+  /* Router no longer needs to dispatch - transports subscribe directly */
   midi_router_start();
 
   heartbeat_start();
