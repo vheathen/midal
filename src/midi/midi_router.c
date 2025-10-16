@@ -1,13 +1,15 @@
 #include "midi_router.h"
 #include "midi_types.h"
+#include "zbus_channels.h"
 
 #include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(midi_router, LOG_LEVEL_INF);
 #include <zephyr/kernel.h>
 #include <zephyr/sys/atomic.h>
+#include <zephyr/zbus/zbus.h>
 
-#define MIDI_Q_CAP 256
-K_MSGQ_DEFINE(midi_q, sizeof(midi_event_t), MIDI_Q_CAP, 4);
+/* Zbus message subscriber for MIDI events */
+ZBUS_MSG_SUBSCRIBER_DEFINE(midi_router_sub);
 
 #define ROUTER_THREAD_PRIORITY 4
 #define ROUTER_THREAD_STACK_SIZE 2048
@@ -56,7 +58,6 @@ static const size_t s_route_stack_sizes[MIDI_ROUTER_MAX_ROUTES] = {
 static atomic_t s_total_enqueued = ATOMIC_INIT(0);
 static atomic_t s_total_dispatched = ATOMIC_INIT(0);
 static atomic_t s_ev_dropped = ATOMIC_INIT(0);
-static uint16_t s_router_queue_high_water;
 
 int midi_router_get_dropped(void) { return (int)atomic_get(&s_ev_dropped); }
 
@@ -83,10 +84,18 @@ static void route_thread(void *p1, void *p2, void *p3) {
 
 void midi_router_init(void) {
   memset(s_routes, 0, sizeof(s_routes));
-  s_router_queue_high_water = 0U;
   atomic_clear(&s_total_enqueued);
   atomic_clear(&s_total_dispatched);
   atomic_clear(&s_ev_dropped);
+
+  /* Add MIDI router as observer to the MIDI event channel */
+  int ret = zbus_chan_add_obs(&midi_event_chan, &midi_router_sub, K_MSEC(100));
+  if (ret != 0) {
+    LOG_ERR("Failed to add MIDI router as observer to midi_event_chan: %d",
+            ret);
+  } else {
+    LOG_INF("MIDI router subscribed to midi_event_chan");
+  }
 }
 
 static void update_high_water(uint16_t *high_water, struct k_msgq *q) {
@@ -131,22 +140,6 @@ int midi_router_register_tx(midi_tx_fn tx, void *ctx, const char *name) {
   return -ENOMEM;
 }
 
-bool midi_router_submit(const midi_event_t *ev) {
-  if (ev == NULL) {
-    return false;
-  }
-
-  int rc = k_msgq_put(&midi_q, ev, K_MSEC(1));
-  if (rc != 0) {
-    atomic_inc(&s_ev_dropped);
-    return false;
-  }
-
-  atomic_inc(&s_total_enqueued);
-  update_high_water(&s_router_queue_high_water, &midi_q);
-  return true;
-}
-
 void midi_router_start(void) {
   k_thread_create(&router_thread_data, router_stack,
                   K_THREAD_STACK_SIZEOF(router_stack), router_thread, NULL,
@@ -177,12 +170,24 @@ static void router_thread(void *p1, void *p2, void *p3) {
   ARG_UNUSED(p2);
   ARG_UNUSED(p3);
 
+  const struct zbus_channel *chan;
   midi_event_t ev;
   uint32_t now = 0;
   uint32_t last_pong_time = 0;
 
+  LOG_INF("MIDI router thread started, waiting for events on zbus...");
+
   while (true) {
-    if (k_msgq_get(&midi_q, &ev, K_FOREVER) == 0) {
+    /* Wait for MIDI event from zbus channel (blocking) */
+    int ret = zbus_sub_wait_msg(&midi_router_sub, &chan, &ev, K_FOREVER);
+    if (ret == 0) {
+      /* Verify this is the correct channel */
+      if (chan != &midi_event_chan) {
+        LOG_WRN("Received message from unexpected channel: %p", chan);
+        continue;
+      }
+
+      atomic_inc(&s_total_enqueued);
       dispatch_to_routes(&ev);
 
       now = k_uptime_get_32();
@@ -190,6 +195,8 @@ static void router_thread(void *p1, void *p2, void *p3) {
         last_pong_time = now;
         LOG_DBG("MIDI router thread heartbeat");
       }
+    } else {
+      LOG_ERR("zbus_sub_wait_msg failed: %d", ret);
     }
   }
 }
@@ -204,7 +211,7 @@ void midi_router_get_stats(struct midi_router_stats *stats) {
   stats->total_enqueued = (uint32_t)atomic_get(&s_total_enqueued);
   stats->total_dispatched = (uint32_t)atomic_get(&s_total_dispatched);
   stats->total_dropped = (uint32_t)atomic_get(&s_ev_dropped);
-  stats->queue_high_water = s_router_queue_high_water;
+  stats->queue_high_water = 0; /* Not tracked with zbus msg subscriber */
 
   size_t count = 0;
   for (size_t i = 0;

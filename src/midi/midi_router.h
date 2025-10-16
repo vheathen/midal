@@ -12,7 +12,6 @@ void midi_router_init(void);
 void midi_router_start(void);
 
 int midi_router_register_tx(midi_tx_fn tx, void *ctx, const char *name);
-bool midi_router_submit(const midi_event_t *ev); // send to the queue
 int midi_router_get_dropped(void);
 
 struct midi_router_stats {

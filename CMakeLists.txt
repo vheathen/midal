@@ -28,6 +28,7 @@ else()
   target_sources(app PRIVATE
     src/diag/heartbeat.c
     src/usbd/midi.c
+    src/zbus_channels.c
     src/pedal/pedal.c
     src/pedal/pedal_reader.c
     src/pedal/pedal_sampler.c

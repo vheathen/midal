@@ -1,13 +1,15 @@
 #include "pedal_sampler.h"
 #include "midal_conf.h"
-#include "midi/midi_router.h"
 #include "midi/midi_types.h"
 #include "pedal_filter.h"
+#include "zbus_channels.h"
 
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/adc.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/zbus/zbus.h>
+
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pedal_sampler, LOG_LEVEL_INF);
 
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) ||                                   \
@@ -100,7 +102,12 @@ void pedal_sampler_process_sample(const pedal_raw_sample_t *sample) {
                  .cc = pedal_configs[i].midi_cc,
                  .value = filtered},
       };
-      (void)midi_router_submit(&ev);
+      /* Publish MIDI event to zbus channel (non-blocking) */
+      int ret = zbus_chan_pub(&midi_event_chan, &ev, K_NO_WAIT);
+      if (ret != 0) {
+        LOG_WRN("Failed to publish MIDI event for %s pedal: %d",
+                pedal_configs[i].name, ret);
+      }
     }
   }
 }
