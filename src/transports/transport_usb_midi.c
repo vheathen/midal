@@ -1,28 +1,40 @@
-#include "midi/midi_router.h"
 #include "midi/midi_types.h"
+#include "zbus_channels.h"
 
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/atomic.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/usb/class/usbd_midi2.h>
+#include <zephyr/zbus/zbus.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(transport_usb_midi, LOG_LEVEL_INF);
+
+/* Zbus message subscriber for MIDI events */
+ZBUS_MSG_SUBSCRIBER_DEFINE(usb_midi_sub);
 
 struct usb_midi_ctx {
   const struct device *dev;
   atomic_t ready;
   atomic_t fail_streak;
+  atomic_t sent;
+  atomic_t dropped;
 };
 
 static struct usb_midi_ctx s_usb_ctx = {
     .dev = DEVICE_DT_GET(DT_NODELABEL(usb_midi)),
 };
 
+#define USB_MIDI_THREAD_PRIORITY 5
+#define USB_MIDI_THREAD_STACK_SIZE 1024
+static struct k_thread usb_midi_thread_data;
+K_THREAD_STACK_DEFINE(usb_midi_stack, USB_MIDI_THREAD_STACK_SIZE);
+static void usb_midi_thread(void *, void *, void *);
+
 static int usb_midi_tx(void *ctx_ptr, const midi_event_t *ev);
 
-int transport_usb_midi_init(midi_tx_fn *out_tx, void **out_ctx) {
+int transport_usb_midi_init(void) {
   if (!device_is_ready(s_usb_ctx.dev)) {
     LOG_ERR("USBD MIDI device not ready");
     return -ENODEV;
@@ -30,13 +42,23 @@ int transport_usb_midi_init(midi_tx_fn *out_tx, void **out_ctx) {
 
   atomic_clear(&s_usb_ctx.fail_streak);
   atomic_clear(&s_usb_ctx.ready);
+  atomic_clear(&s_usb_ctx.sent);
+  atomic_clear(&s_usb_ctx.dropped);
 
-  if (out_tx) {
-    *out_tx = usb_midi_tx;
+  /* Subscribe to MIDI event channel */
+  int ret = zbus_chan_add_obs(&midi_event_chan, &usb_midi_sub, K_MSEC(100));
+  if (ret != 0) {
+    LOG_ERR("Failed to subscribe USB MIDI to midi_event_chan: %d", ret);
+    return ret;
   }
-  if (out_ctx) {
-    *out_ctx = &s_usb_ctx;
-  }
+
+  /* Start transport thread */
+  k_thread_create(&usb_midi_thread_data, usb_midi_stack,
+                  K_THREAD_STACK_SIZEOF(usb_midi_stack), usb_midi_thread,
+                  NULL, NULL, NULL, USB_MIDI_THREAD_PRIORITY, 0, K_NO_WAIT);
+  k_thread_name_set(&usb_midi_thread_data, "usb-midi");
+
+  LOG_INF("USB MIDI transport initialized and subscribed to zbus");
   return 0;
 }
 
@@ -146,4 +168,38 @@ static int usb_midi_tx(void *ctx_ptr, const midi_event_t *ev) {
 #endif
 
   return 0;
+}
+
+static void usb_midi_thread(void *p1, void *p2, void *p3) {
+  ARG_UNUSED(p1);
+  ARG_UNUSED(p2);
+  ARG_UNUSED(p3);
+
+  const struct zbus_channel *chan;
+  midi_event_t ev;
+
+  LOG_INF("USB MIDI transport thread started, waiting for events...");
+
+  while (true) {
+    /* Wait for MIDI event from zbus channel */
+    int ret = zbus_sub_wait_msg(&usb_midi_sub, &chan, &ev, K_FOREVER);
+    if (ret != 0) {
+      LOG_ERR("USB MIDI zbus_sub_wait_msg failed: %d", ret);
+      continue;
+    }
+
+    /* Verify correct channel */
+    if (chan != &midi_event_chan) {
+      LOG_WRN("USB MIDI received event from unexpected channel: %p", chan);
+      continue;
+    }
+
+    /* Process the event */
+    ret = usb_midi_tx(&s_usb_ctx, &ev);
+    if (ret == 0) {
+      atomic_inc(&s_usb_ctx.sent);
+    } else {
+      atomic_inc(&s_usb_ctx.dropped);
+    }
+  }
 }
