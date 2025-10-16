@@ -1,5 +1,4 @@
 #include "diag/heartbeat.h"
-#include "midi/midi_router.h"
 #include "pedal/pedal.h"
 #include "transports/transport_ble_midi.h"
 #include "transports/transport_usb_midi.h"
@@ -51,8 +50,6 @@ int main(void) {
     return 0;
   }
 
-  midi_router_init();
-
   /* Initialize USB MIDI transport - subscribes to zbus directly */
   ret = transport_usb_midi_init();
   if (ret != 0) {
@@ -67,9 +64,6 @@ int main(void) {
     LOG_WRN("BLE MIDI transport init failed: %d", ret);
   }
 #endif
-
-  /* Router no longer needs to dispatch - transports subscribe directly */
-  midi_router_start();
 
   heartbeat_start();
 
