@@ -65,13 +65,13 @@ int transport_usb_midi_init(void) {
 
 static inline int safe_send(struct usb_midi_ctx *ctx, struct midi_ump m);
 
-static inline void send_cc7(struct usb_midi_ctx *ctx, uint8_t ch, uint8_t cc,
+static inline int send_cc7(struct usb_midi_ctx *ctx, uint8_t ch, uint8_t cc,
                             uint8_t val7) {
   /* MIDI 1.0 Channel Voice Control Change over UMP */
   struct midi_ump m = UMP_MIDI1_CHANNEL_VOICE(
       0, /* group 0 */
       UMP_MIDI_CONTROL_CHANGE, (ch & 0x0F), (cc & 0x7F), (val7 & 0x7F));
-  (void)safe_send(ctx, m);
+  return safe_send(ctx, m);
 }
 
 static inline uint16_t scale14_to16(uint16_t v14) {
@@ -104,31 +104,26 @@ void transport_usb_notify_ready(bool ready) {
 }
 
 static inline int safe_send(struct usb_midi_ctx *ctx, struct midi_ump m) {
-  for (int attempt = 0; attempt < 3; attempt++) {
-    int r = usbd_midi_send(ctx->dev, m);
-    if (r == 0) {
-      atomic_clear(&ctx->fail_streak);
-      return 0;
-    }
+  /* Real-time mode: No retries, drop if buffer full.
+   * Priority to fresh messages over old queued ones.
+   * NOTE: Drops counted by caller per-event, not per-message.
+   */
+  int r = usbd_midi_send(ctx->dev, m);
 
-    if (r == -EAGAIN || r == -ENOSPC) {
-#if defined(CONFIG_KERNEL_DEBUG)
-      if (attempt == 0) {
-        LOG_DBG("USB MIDI buffer busy, retrying");
-      }
-#endif
-      k_busy_wait(100);
-      continue;
-    }
-
-    atomic_inc(&ctx->fail_streak);
-    LOG_WRN("USB MIDI send failed: %d", r);
-    return r;
+  if (r == 0) {
+    atomic_clear(&ctx->fail_streak);
+    return 0;
   }
 
+  if (r == -EAGAIN || r == -ENOSPC) {
+    /* Buffer full - return error, caller will count per-event drop */
+    return -EAGAIN;
+  }
+
+  /* Real error (not buffer full) */
   atomic_inc(&ctx->fail_streak);
-  LOG_WRN("USB MIDI send gave up after retries");
-  return -EAGAIN;
+  LOG_WRN("USB MIDI send failed: %d", r);
+  return r;
 }
 
 static int usb_midi_tx(void *ctx_ptr, const midi_event_t *ev) {
@@ -158,14 +153,26 @@ static int usb_midi_tx(void *ctx_ptr, const midi_event_t *ev) {
     v7_scaled = (uint8_t)((v > 127U) ? 127U : v);
   }
 
+  /* Send MIDI 1.0 7-bit message */
   LOG_DBG("USB CC7 ch=%u cc=%u val=%u (scaled)", ch, cc, v7_scaled);
-  send_cc7(ctx, ch, cc, v7_scaled);
+  int ret = send_cc7(ctx, ch, cc, v7_scaled);
 
 #if IS_ENABLED(CONFIG_MIDAL_USB_MIDI2_NATIVE)
+  /* Send MIDI 2.0 14-bit message */
   uint16_t v16 = (v > 16383U) ? 65535U : scale14_to16(v);
   LOG_DBG("USB MIDI2 CC ch=%u cc=%u val16=%u", ch, cc, v16);
   struct midi_ump midi2 = midi2_cc_packet(0, ch, cc, v16);
-  (void)safe_send(ctx, midi2);
+  int ret2 = safe_send(ctx, midi2);
+
+  /* Return error if either send failed */
+  if (ret != 0 || ret2 != 0) {
+    return -EAGAIN;
+  }
+#else
+  /* Return error if send failed */
+  if (ret != 0) {
+    return ret;
+  }
 #endif
 
   return 0;
