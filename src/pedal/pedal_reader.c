@@ -61,10 +61,7 @@ static void pedal_reader_thread(void *p1, void *p2, void *p3) {
     now = k_uptime_get_32();
     if (now - last_pong_time >= 1000U) {
       last_pong_time = now;
-
-      extern int midi_router_get_dropped(void);
-      LOG_INF("Pedal reader thread is alive (router_dropped=%d)",
-              midi_router_get_dropped());
+      LOG_DBG("Pedal reader thread heartbeat");
     }
 
     pedal_sample_slot_t *slot = &sample_slots[slot_index];
