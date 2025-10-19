@@ -120,9 +120,16 @@ static int ble_midi_tx(void *ctx_ptr, const midi_event_t *ev) {
     value = 127U;
   }
 
-  uint8_t msb = IS_ENABLED(CONFIG_MIDAL_USE_14BIT_CC)
-                    ? (uint8_t)((value + 0x40U) >> 7) /* rounded */
-                    : (uint8_t)value;
+  uint8_t msb = 0U;
+  if (IS_ENABLED(CONFIG_MIDAL_USE_14BIT_CC)) {
+    uint16_t msb16 = (uint16_t)((value + 0x40U) >> 7);
+    if (msb16 > 127U) {
+      msb16 = 127U;
+    }
+    msb = (uint8_t)msb16;
+  } else {
+    msb = (uint8_t)value;
+  }
 
   uint8_t msg[3] = {status, controller, msb & 0x7F};
 

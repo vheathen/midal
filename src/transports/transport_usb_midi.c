@@ -66,7 +66,7 @@ int transport_usb_midi_init(void) {
 static inline int safe_send(struct usb_midi_ctx *ctx, struct midi_ump m);
 
 static inline int send_cc7(struct usb_midi_ctx *ctx, uint8_t ch, uint8_t cc,
-                            uint8_t val7) {
+                           uint8_t val7) {
   /* MIDI 1.0 Channel Voice Control Change over UMP */
   struct midi_ump m = UMP_MIDI1_CHANNEL_VOICE(
       0, /* group 0 */
@@ -148,7 +148,11 @@ static int usb_midi_tx(void *ctx_ptr, const midi_event_t *ev) {
   uint8_t v7_scaled = 0;
   if (IS_ENABLED(CONFIG_MIDAL_USE_14BIT_CC)) {
     uint16_t v_clamped = (v > 16383U) ? 16383U : v;
-    v7_scaled = (uint8_t)((v_clamped + 0x40U) >> 7); /* rounding */
+    uint16_t v_rounded = (uint16_t)((v_clamped + 0x40U) >> 7);
+    if (v_rounded > 127U) {
+      v_rounded = 127U;
+    }
+    v7_scaled = (uint8_t)v_rounded;
   } else {
     v7_scaled = (uint8_t)((v > 127U) ? 127U : v);
   }
