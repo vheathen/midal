@@ -1,6 +1,15 @@
 #pragma once
 
-#include "midi/midi_router.h"
+#include <zephyr/kernel.h>
 
-int transport_ble_midi_init(midi_tx_fn *out_tx, void **out_ctx);
+struct transport_stats;
+
+int transport_ble_midi_init(void);
 bool transport_ble_midi_ready(void);
+
+/**
+ * @brief Get BLE MIDI transport statistics
+ *
+ * @param stats Pointer to structure to fill with statistics
+ */
+void transport_ble_get_stats(struct transport_stats *stats);

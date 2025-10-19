@@ -27,13 +27,15 @@ else()
 
   target_sources(app PRIVATE
     src/diag/heartbeat.c
+    src/diag/stats.c
+    src/diag/stats_listener.c
     src/usbd/midi.c
+    src/zbus_channels.c
     src/pedal/pedal.c
     src/pedal/pedal_reader.c
     src/pedal/pedal_sampler.c
     src/pedal/pedal_filter.c
     src/midi/midi_codec.c
-    src/midi/midi_router.c
     src/transports/transport_usb_midi.c
     src/transports/transport_ble_midi.c
     # src/transports/transport_uart_midi.c

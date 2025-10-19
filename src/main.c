@@ -1,5 +1,5 @@
 #include "diag/heartbeat.h"
-#include "midi/midi_router.h"
+#include "diag/stats.h"
 #include "pedal/pedal.h"
 #include "transports/transport_ble_midi.h"
 #include "transports/transport_usb_midi.h"
@@ -51,44 +51,27 @@ int main(void) {
     return 0;
   }
 
-  midi_router_init();
+  /* Initialize stats system - listener + aggregator */
+  ret = midal_stats_init();
+  if (ret != 0) {
+    LOG_ERR("Stats init failed: %d", ret);
+    return -ENODEV;
+  }
 
-  /* Initialize USB MIDI transport (device_next) and register with router */
-  midi_tx_fn usb_tx = NULL;
-  void *usb_ctx = NULL;
-
-  ret = transport_usb_midi_init(&usb_tx, &usb_ctx);
+  /* Initialize USB MIDI transport - subscribes to zbus directly */
+  ret = transport_usb_midi_init();
   if (ret != 0) {
     LOG_ERR("USB MIDI transport init failed: %d", ret);
     return -ENODEV;
   }
 
-  if (usb_tx) {
-    ret = midi_router_register_tx(usb_tx, usb_ctx, "usb");
-    if (ret != 0) {
-      LOG_ERR("Failed to register USB MIDI route: %d", ret);
-      return ret;
-    }
-  } else {
-    LOG_ERR("USB MIDI transport returned NULL tx function");
-    return -ENODEV;
-  }
-
 #if IS_ENABLED(CONFIG_BLE_MIDI)
-  midi_tx_fn ble_tx = NULL;
-  void *ble_ctx = NULL;
-  ret = transport_ble_midi_init(&ble_tx, &ble_ctx);
+  /* Initialize BLE MIDI transport - subscribes to zbus directly */
+  ret = transport_ble_midi_init();
   if (ret != 0) {
     LOG_WRN("BLE MIDI transport init failed: %d", ret);
-  } else if (ble_tx) {
-    ret = midi_router_register_tx(ble_tx, ble_ctx, "ble");
-    if (ret != 0) {
-      LOG_WRN("Failed to register BLE MIDI route: %d", ret);
-    }
   }
 #endif
-
-  midi_router_start();
 
   heartbeat_start();
 

@@ -61,10 +61,7 @@ static void pedal_reader_thread(void *p1, void *p2, void *p3) {
     now = k_uptime_get_32();
     if (now - last_pong_time >= 1000U) {
       last_pong_time = now;
-
-      extern int midi_router_get_dropped(void);
-      LOG_INF("Pedal reader thread is alive (router_dropped=%d)",
-              midi_router_get_dropped());
+      LOG_DBG("Pedal reader thread heartbeat");
     }
 
     pedal_sample_slot_t *slot = &sample_slots[slot_index];
@@ -81,7 +78,9 @@ static void pedal_reader_thread(void *p1, void *p2, void *p3) {
     if (err == -EBUSY) {
       LOG_WRN("ADC busy, skipping cycle");
       continue;
-    } else if (err < 0) {
+    }
+
+    if (err < 0) {
       LOG_ERR("ADC async read failed: %d", err);
       continue;
     }
@@ -89,9 +88,11 @@ static void pedal_reader_thread(void *p1, void *p2, void *p3) {
     int rc = k_poll(&adc_event, 1, K_MSEC(ADC_TIMEOUT_MS));
     if (rc == -EAGAIN) {
       LOG_ERR("ADC conversion timeout");
-      (void)nrfx_saadc_abort();
+      nrfx_saadc_abort();
       continue;
-    } else if (rc < 0) {
+    }
+
+    if (rc < 0) {
       LOG_ERR("ADC poll error: %d", rc);
       continue;
     }
