@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [0.3.0] - 2025-10-19
+
+### Added
+- Real-time priority scheduling for the USB MIDI worker to prioritize fresh events
+- Comprehensive transport statistics reporting via zbus listener callbacks
+
+### Changed
+- Migrated inter-module communication to the zbus message bus
+- Updated USB and BLE MIDI transports to subscribe directly to zbus events, bypassing the legacy router
+
+### Removed
+- Legacy MIDI router module in favor of per-transport zbus subscriptions
+
+### Fixed
+- Pedal CC rounding overflow in `pedal_reader.c` to prevent spurious value jumps
+
 ## [0.2.0] - 2025-10-12
 
 ### Added
