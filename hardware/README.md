@@ -14,7 +14,7 @@ Development began on a solderless breadboard, then moved to a perfboard pilot, a
 
 Schematic and PCB published on OSHWLab: https://oshwlab.com/vheathen/midal
 
-As a reference, here is [the exported .epro file](easyeda/Midal MIDI Interface_2025-12-06.epro) but please note: the source of truth is the OSHWLab/EasyEDA Pro project by the link above.
+As a reference, here is [the exported .epro file](easyeda/Midal-MIDI-Interface_2025-12-06.epro) but please note: the source of truth is the OSHWLab/EasyEDA Pro project by the link above.
 
 ## Hardware Features & Functions
 
